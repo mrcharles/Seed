@@ -3,8 +3,14 @@ require "hump.vector"
 
 Player = Base:new()
 
-Player.speed = 140
-Player.size = vector(50, 80)
+function Player:init()
+
+	self.speed = 140
+	self.size = vector(50, 80)
+	self.offset = vector(0, -40)
+
+	Base.init(self)
+end
 
 
 
@@ -34,8 +40,9 @@ function Player:draw()
 	love.graphics.translate(-self.size.x / 2, -self.size.y)
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill", self.pos.x, self.pos.y, 50, 80)
-	Base.draw(self)
 	love.graphics.pop()
+
+	Base.draw(self)
 end
 
 function Player:moveTo(v)

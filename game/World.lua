@@ -61,6 +61,14 @@ function World:create()
 
 end
 
+function World:getClickedObject(x, y)
+	for i,obj in ipairs(self.objects) do
+		if obj:inBounds(vector(x,y)) then
+			return obj
+		end
+	end
+end
+
 function World:update(dt)
 	for i,v in ipairs(self.objects) do
 		v:update(dt)

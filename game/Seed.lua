@@ -1,6 +1,13 @@
 
 Seed = Base:new()
-Seed.size = vector(10, 10)
+
+function Seed:init()
+	self.size = vector(10, 10)
+	self.offset = vector(-5,-5)
+
+	Base.init(self)
+
+end
 
 function Seed:draw()
 	love.graphics.push()
@@ -11,6 +18,8 @@ function Seed:draw()
 	love.graphics.circle("fill", 0, self.size.y / 2, self.size.x / 2)
 
 	love.graphics.pop()
+
+	Base.draw(self)
 end
 
 function Seed:update(dt)

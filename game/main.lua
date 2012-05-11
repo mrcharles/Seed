@@ -79,7 +79,7 @@ function love.load()
 	player.pos = vector(0, love.graphics.getHeight() / 2)
 	world = World:new()
 	world:create()
-	
+
 	love.graphics.setBackgroundColor(255, 255, 255)
 end
 
@@ -117,6 +117,14 @@ function love.keyreleased( key, unicode )
 
 	elseif key == "up" then
 		cam:move(0, -10)
+
+	elseif key == "f1" then
+		if DEBUG then
+			DEBUG = false
+		else
+			DEBUG = true
+		end
+
 
 	end
 
