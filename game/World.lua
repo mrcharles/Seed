@@ -1,9 +1,10 @@
 vector = require("hump.vector")
+require("Seed")
 
 World = Base:new()
-World.pctsky = 0.1
-World.pcthorizon = 0.2
-
+World.pctsky = 0.15
+World.pcthorizon = 0.15
+World.objects = {}
 
 function World:draw()
 	--draw sky
@@ -21,8 +22,47 @@ function World:draw()
 	love.graphics.rectangle("fill", 0, (self.pctsky + self.pcthorizon) * love.graphics.getHeight(), 
 							love.graphics.getWidth(), (1.0 - self.pctsky - self.pcthorizon) * love.graphics.getHeight())
 
+	for i,v in ipairs(self.objects) do
+		v:draw()
+	end
+end
+
+-- t,l,b,r
+function World:getGroundBounds()
+	local t =  { 
+		top = love.graphics.getHeight() * ( self.pctsky + self.pcthorizon),
+		left = 0,
+		bottom = love.graphics.getHeight(),
+		right = love.graphics.getWidth(),
+	}
+
+	return t
+end
+
+function World:addObject(obj)
+	table.insert(self.objects, obj)
+end
+
+function World:randomSpot()
+	local bounds = self:getGroundBounds()
+
+	return vector( bounds.left + (bounds.right - bounds.left) * math.random(),
+				    bounds.top + (bounds.bottom - bounds.top) * math.random() ) 
+
+end
+
+function World:create()
+	--add initial seed somewhere:
+	local seed = Seed:new()
+
+	seed.pos = self:randomSpot()
+
+	self:addObject(seed)
+
 end
 
 function World:update(dt)
-
+	for i,v in ipairs(self.objects) do
+		v:update(dt)
+	end
 end
