@@ -75,6 +75,8 @@ function love.load()
 	-- effect:send('balls', unpack(balls))
 	-- effect:send('palette', {0, 0, 0, 10})
 
+	DRAWPHYSICS = true
+
 	player = Player:new()
 	player:init()
 	world = World:new()
@@ -152,6 +154,12 @@ function love.keyreleased( key, unicode )
 			DRAWGROUND = false
 		else
 			DRAWGROUND = true
+		end
+	elseif key == "f10" then
+		if DRAWPHYSICS then
+			DRAWPHYSICS = false
+		else
+			DRAWPHYSICS = true
 		end
 	end
 

@@ -45,7 +45,12 @@ end
 
 
 function Base:update(dt)
+	if self.physics then
+		local x = self.physics.body:getX()
+		local y = self.physics.body:getY()
 
+		self.pos = vector(x,y)
+	end
 end
 
 function Base:draw()

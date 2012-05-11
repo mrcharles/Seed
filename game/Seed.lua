@@ -37,5 +37,5 @@ function Seed:makePlant()
 end
 
 function Seed:update(dt)
-
+	Base.update(self, dt)
 end

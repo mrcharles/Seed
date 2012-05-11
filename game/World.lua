@@ -9,10 +9,12 @@ World.objects = {}
 
 World.minx = -2000
 World.maxx = 2000
+World.thickness = 100
 
 World.groundresolution = 50
 World.ground = {}
 
+local physobjs = {}
 
 function World:draw()
 	--draw sky
@@ -38,6 +40,17 @@ function World:draw()
 		v:draw()
 	end
 
+	if DRAWPHYSICS then
+		love.graphics.setColor(72, 160, 14) -- set the drawing color to green for the ground
+		love.graphics.polygon("fill", physobjs.ground.body:getWorldPoints(physobjs.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
+
+		for i,v in ipairs(physobjs) do
+			love.graphics.setColor(255, 0, 0) --set the drawing color to red for the ball
+			love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
+		end
+	end
+
+
 
 end
 
@@ -59,6 +72,9 @@ end
 
 function World:addObject(obj)
 	obj.world = self
+	if obj.onAddToWorld then
+		obj:onAddToWorld(self)
+	end
 	table.insert(self.objects, obj)
 end
 
@@ -67,6 +83,11 @@ function World:removeObject(obj)
     if v == obj then
     	v.world = nil
         table.remove(self.objects,i)
+
+        if v.physics then
+
+        end
+
         return
     end
 end
@@ -110,6 +131,42 @@ function World:debugDrawGround()
 
 end
 
+function World:getPatch(pos)
+	local index = math.floor( (pos.x - self.minx) / self.groundresolution ) + 1
+	return self.ground[index]
+end
+
+
+function World:init()
+	love.physics.setMeter(128)
+	local world = love.physics.newWorld(0, 9.81 * 128, true)
+
+	self.physworld = world
+
+	physobjs.ground = {}
+	physobjs.ground.body = love.physics.newBody(world, 0, self:getGroundHeight() + self.thickness / 2)
+	physobjs.ground.shape = love.physics.newRectangleShape( self.maxx - self.minx, self.thickness)
+	physobjs.ground.fixture = love.physics.newFixture(physobjs.ground.body, physobjs.ground.shape)
+
+
+
+end
+
+function World:addCirclePhysics(obj)
+	local circle = {}
+	
+	circle.body = love.physics.newBody(self.physworld, obj.pos.x, obj.pos.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+	circle.body:setMass(15) --give it a mass of 15
+	circle.shape = love.physics.newCircleShape( obj.size.x / 2 ) --the ball's shape has a radius of 20
+	circle.fixture = love.physics.newFixture(circle.body, circle.shape, 1) --attach shape to body and give it a friction of 1
+	circle.fixture:setRestitution(0.2) --let the ball bounce
+
+	obj.physics = circle
+
+	table.insert( physobjs, circle )
+
+	--circle.body:applyForce(0,1)
+end
 
 function World:create()
 	--initialize our ground data
@@ -129,6 +186,7 @@ function World:create()
 	local seed = Seed:new()
 	seed:init()
 
+
 	seed.genetics = {
 		planttype = PlantType.Flower,
 		size = 1.0,
@@ -136,9 +194,10 @@ function World:create()
 		color = { 128, 0, 128 }
 	}
 
-	seed.pos = self:randomSpot()
+	seed.pos = self:randomSpot() + vector(0, -100)
 
 	self:addObject(seed)
+	self:addCirclePhysics(seed)
 
 end
 
@@ -153,6 +212,7 @@ end
 
 
 function World:update(dt)
+	self.physworld:update(dt)
 	for i,v in ipairs(self.objects) do
 		v:update(dt)
 	end

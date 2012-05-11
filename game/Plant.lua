@@ -49,8 +49,12 @@ function Plant:init(seed)
 	Base.init(self)
 end
 
-function Plant:reproduceGenetics()
-	
+function Plant:onAddToWorld(world)
+	self.ground = world:getPatch(self.pos)
+end
+
+function Plant:makeSeeds()
+
 end
 
 function Plant:update(dt)
@@ -60,10 +64,10 @@ function Plant:update(dt)
 		if self.state < PlantState.Mature then
 			self.state = self.state + 1
 			self.size = self.sizes[self.genetics.planttype][self.state]
+		else -- seed
+			
 		end
-
 	end
-
 end
 
 function Plant:draw()
