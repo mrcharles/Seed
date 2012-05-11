@@ -53,8 +53,17 @@ function Plant:onAddToWorld(world)
 	self.ground = world:getPatch(self.pos)
 end
 
-function Plant:makeSeeds()
+function Plant:reproduceGenetics()
+	return self.genetics
+end
 
+function Plant:makeSeed()
+	local seed = Seed:new()
+	seed:init(self)
+	seed.pos = self.pos
+	self.world:addCirclePhysics(seed)
+
+	return seed
 end
 
 function Plant:update(dt)
@@ -64,8 +73,18 @@ function Plant:update(dt)
 		if self.state < PlantState.Mature then
 			self.state = self.state + 1
 			self.size = self.sizes[self.genetics.planttype][self.state]
-		else -- seed
-			
+		elseif not self.seeded then -- seed
+			print('seeding')
+			for i=1,self.genetics.seedrate do
+				local dir = vector( 2 * math.random() - 1, -1)
+
+				local seed = self:makeSeed()
+				seed:pulse( dir:normalized(), 100)
+				self.seeded = true
+
+			end
+
+
 		end
 	end
 end

@@ -157,6 +157,7 @@ function World:addCirclePhysics(obj)
 	
 	circle.body = love.physics.newBody(self.physworld, obj.pos.x, obj.pos.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	circle.body:setMass(15) --give it a mass of 15
+	circle.body:setAngularDamping(12)
 	circle.shape = love.physics.newCircleShape( obj.size.x / 2 ) --the ball's shape has a radius of 20
 	circle.fixture = love.physics.newFixture(circle.body, circle.shape, 1) --attach shape to body and give it a friction of 1
 	circle.fixture:setRestitution(0.2) --let the ball bounce
@@ -191,7 +192,8 @@ function World:create()
 		planttype = PlantType.Flower,
 		size = 1.0,
 		growspeed = 10.0,
-		color = { 128, 0, 128 }
+		color = { 128, 0, 128 },
+		seedrate = 3
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)

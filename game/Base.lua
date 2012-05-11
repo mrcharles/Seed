@@ -20,6 +20,13 @@ function Base:init()
 	end
 end
 
+function Base:pulse(dir, mag)
+	if self.physics then
+		local total = dir * mag
+		self.physics.body:applyForce(total.x, total.y)
+	end
+end
+
 function Base:setBounds(size, offset)
 	self.bounds = {
 		top = -size.y / 2,
