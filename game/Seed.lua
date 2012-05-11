@@ -1,3 +1,5 @@
+require "Base"
+require "Plant"
 
 Seed = Base:new()
 
@@ -20,6 +22,11 @@ function Seed:draw()
 	love.graphics.pop()
 
 	Base.draw(self)
+end
+
+function Seed:makePlant()
+	return Plant:new(self)
+
 end
 
 function Seed:update(dt)

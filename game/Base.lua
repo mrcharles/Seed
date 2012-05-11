@@ -8,11 +8,11 @@ Base = {
 }
 
 
-function Base:new (o)
+function Base:new (o, ...)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	self:init()
+	self:init(...)
 	return o
 end
 

@@ -106,6 +106,9 @@ function love.mousepressed(x, y, button)
 		local hit = world:getClickedObject(x, y)
 		if hit then
 			player:moveToObjAndDo(hit, "pickUp", hit)
+		elseif player:hasSeeds() then
+			local plantpos = vector(x,y)
+			player:moveToAndDo( plantpos, "plant", plantpos )
 		else
 			player:moveTo( vector(x,y) )
 		end
