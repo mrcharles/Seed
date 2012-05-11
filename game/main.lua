@@ -95,7 +95,6 @@ end
 
 function love.mousepressed(x, y, button)
 	if button == "l" then
-		print("moved")
 		player:moveTo( vector(x,y) )
 	end
 end
