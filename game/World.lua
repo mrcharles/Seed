@@ -1,10 +1,18 @@
 vector = require("hump.vector")
 require("Seed")
+require ("Plant")
 
 World = Base:new()
 World.pctsky = 0.6
 World.pcthorizon = 0.25
 World.objects = {}
+
+World.minx = -2000
+World.maxx = 2000
+
+World.groundresolution = 50
+World.ground = {}
+
 
 function World:draw()
 	--draw sky
@@ -22,9 +30,15 @@ function World:draw()
 	love.graphics.rectangle("fill", 0, (self.pctsky + self.pcthorizon) * love.graphics.getHeight(), 
 							love.graphics.getWidth(), (1.0 - self.pctsky - self.pcthorizon) * love.graphics.getHeight())
 
+	if DRAWGROUND then
+		self:debugDrawGround()
+	end
+
 	for i,v in ipairs(self.objects) do
 		v:draw()
 	end
+
+
 end
 
 -- t,l,b,r
@@ -68,9 +82,59 @@ function World:randomSpot()
 
 end
 
+function World:debugDrawGround()
+
+	local y = self:getGroundHeight()
+	for i=1,table.maxn(self.ground) do
+		slice = self.ground[i]
+
+		local x = self.minx + (i - 1) * self.groundresolution
+		local mx = self.minx + i * self.groundresolution
+
+		--draw radiation as horizontal line
+
+		local a = slice.radiation * 255
+		love.graphics.setColor(255, 0, 0, a)
+		love.graphics.line(x, y, mx, y)
+
+		-- draw nutrition as a brown line
+		local nx = x + (mx - x) * 0.4
+		love.graphics.setColor(114,45,0)
+		love.graphics.line(nx, y, nx, y - slice.nutrition * 50)
+
+		-- draw water as a blue line
+		local wx = x + (mx - x) * 0.6
+		love.graphics.setColor(0,255,255)
+		love.graphics.line(wx, y, wx, y - slice.water * 50)
+	end
+
+end
+
+
 function World:create()
+	--initialize our ground data
+	local slices = (self.maxx - self.minx) / self.groundresolution
+	for i=1,slices do
+	 	local slice = {
+	 		nutrition = math.random() * 0.2,
+	 		water = math.random() * 0.2,
+	 		radiation = math.random() * 0.6
+		}
+		table.insert(self.ground, slice)
+	 end 
+
+
+
 	--add initial seed somewhere:
 	local seed = Seed:new()
+	seed:init()
+
+	seed.genetics = {
+		planttype = PlantType.Flower,
+		size = 1.0,
+		growspeed = 10.0,
+		color = { 128, 0, 128 }
+	}
 
 	seed.pos = self:randomSpot()
 

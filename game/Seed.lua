@@ -3,9 +3,13 @@ require "Plant"
 
 Seed = Base:new()
 
-function Seed:init()
+function Seed:init(plant)
 	self.size = vector(10, 10)
 	self.offset = vector(-5,-5)
+
+	if plant ~= nil then
+		self.genetics = plant:reproduceGenetics()
+	end
 
 	Base.init(self)
 
@@ -25,7 +29,10 @@ function Seed:draw()
 end
 
 function Seed:makePlant()
-	return Plant:new(self)
+	local plant = Plant:new()
+	plant:init(self)
+
+	return plant
 
 end
 

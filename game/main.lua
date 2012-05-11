@@ -76,7 +76,10 @@ function love.load()
 	-- effect:send('palette', {0, 0, 0, 10})
 
 	player = Player:new()
+	player:init()
 	world = World:new()
+	world:init()
+
 	world:create()
 
 	player.pos = vector(0, world:getGroundHeight())
@@ -98,6 +101,9 @@ function love.draw()
 end
 
 function love.update(dt)
+	if SPEEDUP then
+		dt = dt * 10.0
+	end
 	world:update(dt)
 	player:update(dt)
 end
@@ -135,8 +141,18 @@ function love.keyreleased( key, unicode )
 		else
 			DEBUG = true
 		end
-
-
+	elseif key == "f12" then
+		if SPEEDUP then
+			SPEEDUP = false
+		else
+			SPEEDUP = true
+		end
+	elseif key == "f11" then
+		if DRAWGROUND then
+			DRAWGROUND = false
+		else
+			DRAWGROUND = true
+		end
 	end
 
 end

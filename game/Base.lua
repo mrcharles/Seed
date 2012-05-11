@@ -4,15 +4,13 @@ require "Tools"
 
 Base = {
 	pos = vector(0,0),
-	debug = true
 }
 
 
-function Base:new (o, ...)
+function Base:new (o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	self:init(...)
 	return o
 end
 

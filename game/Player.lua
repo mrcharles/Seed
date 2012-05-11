@@ -7,7 +7,7 @@ function Player:init()
 
 	self.speed = 140
 	self.size = vector(60, 190)
-	self.offset = vector(0, -40)
+	self.offset = vector(0, -95)
 	self.actionoffset = vector(30, 0)
 	self.inventory = {}
 
