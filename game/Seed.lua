@@ -5,7 +5,7 @@ Seed = Base:new()
 
 function Seed:init(plant)
 	self.size = vector(10, 10)
-	self.offset = vector(-5,-5)
+	self.offset = vector(0,0)
 
 	if plant ~= nil then
 		self.genetics = plant:reproduceGenetics()
@@ -19,9 +19,9 @@ function Seed:draw()
 	love.graphics.push()
 
 	love.graphics.translate(self.pos.x, self.pos.y)
-	love.graphics.translate(-self.size.x / 2, -self.size.y)
+	--love.graphics.translate(-self.offset.x / 2, -self.offset.y)
 	love.graphics.setColor(173, 69, 0)
-	love.graphics.circle("fill", 0, self.size.y / 2, self.size.x / 2)
+	love.graphics.circle("fill", 0, 0, self.size.x / 2)
 
 	love.graphics.pop()
 
