@@ -28,6 +28,21 @@ function Tools:pointInScreen(pos, size)
    return true
 end
 
+function Tools:makeRectFromBounds(pos, bounds)
+    local r = {
+      x = pos.x + bounds.left,
+      y = pos.y + bounds.top,
+      h = bounds.right - bounds.left,
+      w = bounds.bottom - bounds.top
+    }
+    return r
+end
+
+function Tools:pointInBounds(point, pos, bounds)
+  local r = Tools:makeRectFromBounds(pos, bounds)
+  return Tools:pointInRect(point.x, point.y, r)
+end
+
 -- function assumes r has x y h w
 function Tools:pointInRect(x, y, r)
    if x >= r.x and x <= r.x + r.w and y >= r.y and y <= r.y + r.h then

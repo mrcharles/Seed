@@ -17,7 +17,7 @@ local balls = {
 
 
 function love.load()
-	-- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
+	 -- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
 
 	cam = camera(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2,1,0)
 
@@ -101,7 +101,11 @@ end
 
 function love.mousepressed(x, y, button)
 	if button == "l" then
-		player:moveTo( vector(x,y) )
+		if world:getClickedObject(x, y) then
+
+		else
+			player:moveTo( vector(x,y) )
+		end
 	end
 end
 

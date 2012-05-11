@@ -1,4 +1,6 @@
 vector = require "hump.vector"
+require "Tools"
+
 
 Base = {
 	pos = vector(0,0),
@@ -37,6 +39,11 @@ function Base:setBounds(size, offset)
 	end
 
 end
+
+function Base:inBounds(point)
+	return Tools:pointInBounds(point, self.pos, self.bounds)
+end
+
 
 
 function Base:update(dt)
