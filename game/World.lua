@@ -40,8 +40,21 @@ function World:getGroundBounds()
 end
 
 function World:addObject(obj)
+	obj.world = self
 	table.insert(self.objects, obj)
 end
+
+function World:removeObject(obj)
+    for i, v in ipairs(self.objects) do
+    if v == obj then
+    	v.world = nil
+        table.remove(self.objects,i)
+        return
+    end
+end
+
+end
+
 
 function World:randomSpot()
 	local bounds = self:getGroundBounds()
@@ -68,6 +81,8 @@ function World:getClickedObject(x, y)
 		end
 	end
 end
+
+
 
 function World:update(dt)
 	for i,v in ipairs(self.objects) do

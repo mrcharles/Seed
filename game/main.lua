@@ -80,6 +80,8 @@ function love.load()
 	world = World:new()
 	world:create()
 
+	player.world = world
+
 	love.graphics.setBackgroundColor(255, 255, 255)
 end
 
@@ -101,8 +103,9 @@ end
 
 function love.mousepressed(x, y, button)
 	if button == "l" then
-		if world:getClickedObject(x, y) then
-
+		local hit = world:getClickedObject(x, y)
+		if hit then
+			player:moveToObjAndDo(hit, "pickUp", hit)
 		else
 			player:moveTo( vector(x,y) )
 		end
