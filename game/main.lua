@@ -1,6 +1,7 @@
 vector = require "hump.vector"
 camera = require "hump.camera"
 require "Player"
+require "World"
 
 
 local balls = {
@@ -75,6 +76,7 @@ function love.load()
 	-- effect:send('palette', {0, 0, 0, 10})
 
 	player = Player:new()
+	world = World:new()
 
 	love.graphics.setBackgroundColor(255, 255, 255)
 end
@@ -82,6 +84,7 @@ end
 function love.draw()
 	cam:attach()
 
+	world:draw()
 	--love.graphics.setPixelEffect(effect)
 	--love.graphics.rectangle('fill', 0,0,love.graphics.getWidth(), love.graphics.getHeight())
 
@@ -90,6 +93,7 @@ function love.draw()
 end
 
 function love.update(dt)
+	world:update(dt)
 	player:update(dt)
 end
 
