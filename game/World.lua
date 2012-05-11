@@ -2,8 +2,8 @@ vector = require("hump.vector")
 require("Seed")
 
 World = Base:new()
-World.pctsky = 0.15
-World.pcthorizon = 0.15
+World.pctsky = 0.6
+World.pcthorizon = 0.25
 World.objects = {}
 
 function World:draw()
@@ -30,13 +30,17 @@ end
 -- t,l,b,r
 function World:getGroundBounds()
 	local t =  { 
-		top = love.graphics.getHeight() * ( self.pctsky + self.pcthorizon),
+		top = self:getGroundHeight(),
 		left = 0,
-		bottom = love.graphics.getHeight(),
+		bottom = self:getGroundHeight(),
 		right = love.graphics.getWidth(),
 	}
 
 	return t
+end
+
+function World:getGroundHeight()
+	return love.graphics.getHeight() * (self.pctsky + self.pcthorizon) 
 end
 
 function World:addObject(obj)

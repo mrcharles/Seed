@@ -76,9 +76,10 @@ function love.load()
 	-- effect:send('palette', {0, 0, 0, 10})
 
 	player = Player:new()
-	player.pos = vector(0, love.graphics.getHeight() / 2)
 	world = World:new()
 	world:create()
+
+	player.pos = vector(0, world:getGroundHeight())
 
 	player.world = world
 

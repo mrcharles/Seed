@@ -56,6 +56,9 @@ end
 
 function Player:moveTo(v)
 	self.target = v
+
+	--constrain the position
+	self.target.y = self.world:getGroundHeight()
 end
 
 function Player:pickUp( obj )
@@ -102,9 +105,9 @@ function Player:moveToObjAndDo( obj, action, ... )
 	local targetpos = obj.pos;
 
 	if obj.pos.x > self.pos.x then
-		targetpos = targetpos + self.actionoffset
-	else
 		targetpos = targetpos - self.actionoffset
+	else
+		targetpos = targetpos + self.actionoffset
 	end
 
 	self:moveTo(targetpos)
