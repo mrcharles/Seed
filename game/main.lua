@@ -3,7 +3,6 @@ camera = require "hump.camera"
 require "Player"
 require "World"
 
-
 local balls = {
 	{400,300}, -- this one will be controlled by the mouse
 
@@ -17,8 +16,9 @@ local balls = {
 
 
 function love.load()
-	-- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
+	 -- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
 
+	math.randomseed(os.time())
 	cam = camera(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2,1,0)
 
 	-- print("loaded some shit")
@@ -75,11 +75,19 @@ function love.load()
 	-- effect:send('balls', unpack(balls))
 	-- effect:send('palette', {0, 0, 0, 10})
 
+	DRAWPHYSICS = true
+
 	player = Player:new()
-	player.pos = vector(0, love.graphics.getHeight() / 2)
+	player:init()
 	world = World:new()
+	world:init()
+
 	world:create()
-	
+
+	player.pos = vector(0, world:getGroundHeight())
+
+	player.world = world
+
 	love.graphics.setBackgroundColor(255, 255, 255)
 end
 
@@ -95,13 +103,27 @@ function love.draw()
 end
 
 function love.update(dt)
+	if SPEEDUP then
+		dt = dt * 10.0
+	end
 	world:update(dt)
 	player:update(dt)
 end
 
 function love.mousepressed(x, y, button)
 	if button == "l" then
-		player:moveTo( vector(x,y) )
+		local hit = world:getClickedObject(x, y)
+		if hit then
+			print("moving to pick up a thing")
+			player:moveToObjAndDo(hit, "pickUp", hit)
+		elseif player:hasSeeds() then
+			print("moving to plant a seed")
+			local plantpos = vector(x,y)
+			player:moveToAndDo( plantpos, "plant", plantpos )
+		else
+			print('just moving')
+			player:moveTo( vector(x,y) )
+		end
 	end
 end
 
@@ -118,6 +140,30 @@ function love.keyreleased( key, unicode )
 	elseif key == "up" then
 		cam:move(0, -10)
 
+	elseif key == "f1" then
+		if DEBUG then
+			DEBUG = false
+		else
+			DEBUG = true
+		end
+	elseif key == "f12" then
+		if SPEEDUP then
+			SPEEDUP = false
+		else
+			SPEEDUP = true
+		end
+	elseif key == "f11" then
+		if DRAWGROUND then
+			DRAWGROUND = false
+		else
+			DRAWGROUND = true
+		end
+	elseif key == "f10" then
+		if DRAWPHYSICS then
+			DRAWPHYSICS = false
+		else
+			DRAWPHYSICS = true
+		end
 	end
 
 end

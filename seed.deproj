@@ -1,2 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project/>
+<project>
+  <file>
+    <filename>game\Base.lua</filename>
+  </file>
+  <file>
+    <filename>game\Plant.lua</filename>
+  </file>
+  <file>
+    <filename>game\Player.lua</filename>
+  </file>
+  <file>
+    <filename>game\Seed.lua</filename>
+  </file>
+  <file>
+    <filename>game\Tools.lua</filename>
+  </file>
+  <file>
+    <filename>game\World.lua</filename>
+  </file>
+  <file>
+    <filename>game\conf.lua</filename>
+  </file>
+  <file>
+    <filename>game\main.lua</filename>
+  </file>
+</project>
