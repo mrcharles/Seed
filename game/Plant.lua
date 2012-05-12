@@ -1,4 +1,5 @@
 require "Base"
+require "Genetics"
 
 PlantState = {
 	Sprout = 1,
@@ -62,6 +63,8 @@ function Plant:makeSeed()
 	seed:init(self)
 	seed.pos = self.pos
 	self.world:addCirclePhysics(seed)
+
+	seed.genetics = Genetics:asexualMutate(self.genetics)
 
 	return seed
 end

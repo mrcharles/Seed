@@ -3,7 +3,6 @@ camera = require "hump.camera"
 require "Player"
 require "World"
 
-
 local balls = {
 	{400,300}, -- this one will be controlled by the mouse
 
@@ -19,6 +18,7 @@ local balls = {
 function love.load()
 	 -- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
 
+	math.randomseed(os.time())
 	cam = camera(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2,1,0)
 
 	-- print("loaded some shit")

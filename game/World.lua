@@ -1,6 +1,7 @@
 vector = require("hump.vector")
-require("Seed")
+require ("Seed")
 require ("Plant")
+require ("Genetics")
 
 World = Base:new()
 World.pctsky = 0.6
@@ -51,9 +52,6 @@ function World:draw()
 			end
 		end
 	end
-
-
-
 end
 
 -- t,l,b,r
@@ -192,6 +190,13 @@ function World:create()
 	--add initial seed somewhere:
 	local seed = Seed:new()
 	seed:init()
+
+	--						value 			rate  					change 	min 				max 			floor
+	Genetics:registerValue( "planttype", 	MutationRate.Rare, 		1, 		PlantType.Flower, 	PlantType.Tree, true)
+	Genetics:registerValue( "size", 		MutationRate.Common, 	0.15, 	0.1, 				2)
+	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
+	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	0.1, 	0, 					255)
+	Genetics:registerValue( "seedrate", 	MutationRate.Uncommon, 	1, 		0)
 
 
 	seed.genetics = {

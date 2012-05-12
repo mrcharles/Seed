@@ -7,9 +7,6 @@ function Seed:init(plant)
 	self.size = vector(10, 10)
 	self.offset = vector(0,0)
 
-	if plant ~= nil then
-		self.genetics = plant:reproduceGenetics()
-	end
 
 	Base.init(self)
 
