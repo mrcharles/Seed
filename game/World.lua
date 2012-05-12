@@ -298,7 +298,14 @@ end
 
 
 function World:update(dt)
-	self.physworld:update(dt)
+
+	local physdt = dt
+
+	if SPEEDUP then
+		physdt = dt / 10.0
+	end
+
+	self.physworld:update(physdt)
 	for i,v in ipairs(self.objects) do
 		v:update(dt)
 	end

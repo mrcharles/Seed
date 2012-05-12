@@ -83,11 +83,12 @@ function Plant:init(seed)
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
 	self.data = chunk()
 
+	--self.pos = seed.pos
+	Base.init(self)
+
 	self.size = self:getSize()
 
 
-	--self.pos = seed.pos
-	Base.init(self)
 end
 
 function Plant:onAddToWorld(world)
@@ -370,4 +371,6 @@ function Plant:draw()
 			end
 		end
 	end
+
+	Base.draw(self)
 end
