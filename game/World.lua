@@ -45,8 +45,10 @@ function World:draw()
 		love.graphics.polygon("fill", physobjs.ground.body:getWorldPoints(physobjs.ground.shape:getPoints())) -- draw a "filled in" polygon using the ground's coordinates
 
 		for i,v in ipairs(physobjs) do
-			love.graphics.setColor(255, 0, 0) --set the drawing color to red for the ball
-			love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
+			if v.body:isActive() then
+				love.graphics.setColor(255, 0, 0) --set the drawing color to red for the ball
+				love.graphics.circle("fill", v.body:getX(), v.body:getY(), v.shape:getRadius())
+			end
 		end
 	end
 
@@ -75,6 +77,10 @@ function World:addObject(obj)
 	if obj.onAddToWorld then
 		obj:onAddToWorld(self)
 	end
+	if obj.physics then
+		obj.physics.body:setActive(true)
+	end
+
 	table.insert(self.objects, obj)
 end
 
@@ -85,7 +91,7 @@ function World:removeObject(obj)
         table.remove(self.objects,i)
 
         if v.physics then
-
+        	v.physics.body:setActive(false)
         end
 
         return
