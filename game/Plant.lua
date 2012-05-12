@@ -8,7 +8,9 @@ PlantState = {
 	Mature = 4
 }
 
-PlantType = {
+
+
+PlantStyle = {
 	Flower = 1,
 	Bush = 2,
 	Tree = 3,
@@ -16,6 +18,7 @@ PlantType = {
 
 Plant = Base:new()
 
+Plant.blossomfrequency = 0.3
 Plant.sizes = {
 	{ -- flower
 	vector( 5, 10 ),
@@ -48,7 +51,11 @@ function Plant:getKeyName(t, val)
 end
 
 function Plant:makeDataName()
-	return string.format("plantdata/%s%ddata.lua", self:getKeyName(PlantType, self.genetics.planttype), 1)
+	return string.format("plantdata/%s%ddata.lua", self:getKeyName(PlantStyle, self.genetics.plantstyle), self.genetics.planttype)
+end
+
+function Plant:makeBlossomName()
+	return string.format("plantdata/blossom%ddata.lua", self.genetics.blossomtype)
 end
 
 function Plant:init(seed)
@@ -60,7 +67,7 @@ function Plant:init(seed)
 	self.growtime = 0
 
 	self.leaves = {}
-	self.flowers = {}
+	self.blossoms = {}
 
 	--load our data
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
@@ -93,13 +100,54 @@ function Plant:makeSeed()
 	return seed
 end
 
-function Plant:getFlowerPosition()
-	local center = vector(self.pos.x, self.pos.y - self.size.y)
-	local range = self.size.y 
+function Plant:getNewBlossomPoint()
+	local state = self.data[self.state]
+	assert( table.maxn(self.blossoms) < table.maxn(state.blossompoints))
+	return table.maxn(self.blossoms) + 1
 end
 
-function Plant:updateState(state, dt)
+function Plant:hasBlossomPoints()
+	local state = self.data[self.state]
+	if state.blossompoints then
+		if table.maxn(self.blossoms) < table.maxn(state.blossompoints) then
+			return true
+		end
+	end
 
+end
+
+--this shit is going to spam memroy like a motherfucker
+function Plant:loadBlossomData()
+	local chunk = love.filesystem.load( self:makeBlossomName() ) -- load the chunk 
+	return chunk()
+end
+
+function Plant:sproutBlossom()
+
+	if self.blossomdata == nil then
+		self.blossomdata = self:loadBlossomData()
+	end
+	local blossom  = {
+		blossompoint = self:getNewBlossomPoint(),
+		state = PlantState.Baby,
+		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
+	}
+
+	table.insert(self.blossoms, blossom)
+end
+
+function Plant:updateParts(dt)
+
+	if self.nextblossomtime then
+		self.nextblossomtime = self.nextblossomtime - dt
+		if self.nextblossomtime <= 0 then
+			print('blossoming...')
+			self:sproutBlossom()
+			self.nextblossomtime = nil
+		end
+	elseif self:hasBlossomPoints() then
+		self.nextblossomtime = self.blossomfrequency * math.random()
+	end
 end
 
 function Plant:getSize()
@@ -128,6 +176,24 @@ function Plant:update(dt)
 
 		end
 	end
+
+	--grow blossoms
+	for i,blossom in ipairs(self.blossoms) do
+		if blossom.state < PlantState.Mature then
+			blossom.growtime = blossom.growtime - dt
+			if blossom.growtime <= 0.0 then
+				blossom.state = blossom.state + 1
+				blossom.growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
+			end
+
+		end
+	end
+
+	self:updateParts(dt)
+end
+
+function Plant:getBlossomPoint(idx)
+	return vector( self.data[self.state].blossompoints[idx])
 end
 
 function Plant:draw()
@@ -136,24 +202,39 @@ function Plant:draw()
 	--love.graphics.setColor(self.genetics.color)
 	love.graphics.setColor(0, 113, 8)
 
-
 	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+
+	--now draw our blossoms!
+	for i,blossom in ipairs(self.blossoms) do
+		love.graphics.push()
+		
+		local point = self:getBlossomPoint(blossom.blossompoint)
+		love.graphics.translate(point.x, point.y)
+
+		love.graphics.setColor( self.genetics.color )
+		local size = self.blossomdata[blossom.state].size;
+		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+
+		love.graphics.pop()
+	end
+
 	love.graphics.pop()
+
 
 	if DRAWPLANTS then
 		local state = self.data[self.state]
 
-		if state.flowerpoints then 
-			for i,v in ipairs(state.flowerpoints) do
+		if state.blossompoints then 
+			for i,v in ipairs(state.blossompoints) do
 				love.graphics.setColor(255,0,0)
-				love.graphics.circle("fill",self.pos.x + v[1], self.pos.y - v[2], 3)
+				love.graphics.circle("fill",self.pos.x + v[1], self.pos.y + v[2], 2)
 			end
 		end
 
 		if state.stems then
 			for i,v in ipairs(state.stems) do
 				love.graphics.setColor(255,255,255)
-				love.graphics.line(self.pos.x + v[1][1], self.pos.y - v[1][2], self.pos.x + v[2][1], self.pos.y - v[2][2])
+				love.graphics.line(self.pos.x + v[1][1], self.pos.y + v[1][2], self.pos.x + v[2][1], self.pos.y + v[2][2])
 			end
 		end
 	end

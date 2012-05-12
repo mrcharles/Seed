@@ -81,6 +81,8 @@ end
 function Genetics:mutateValue( name, val, r )
 	local mut = MutationTable[name]
 
+	local r = r or math.random()
+
 	if mut == nil or MutationProbabilities[ mut.rate ] < r then
 		return val
 	else

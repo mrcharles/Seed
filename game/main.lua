@@ -76,8 +76,8 @@ function love.load()
 	-- effect:send('palette', {0, 0, 0, 10})
 
 	--DRAWPHYSICS = true
-	DRAWPLANTS = true
-	
+	--DRAWPLANTS = true
+
 	player = Player:new()
 	player:init()
 	world = World:new()

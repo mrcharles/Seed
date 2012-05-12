@@ -242,29 +242,35 @@ function World:create()
 	seed:init()
 
 	--						value 			rate  					change 	min 				max 			floor
-	Genetics:registerValue( "planttype", 	MutationRate.Rare, 		1, 		PlantType.Flower, 	PlantType.Tree, true)
+	Genetics:registerValue( "plantstyle", 	MutationRate.Rare, 		1, 		PlantStyle.Flower, 	PlantStyle.Tree, true)
 	Genetics:registerValue( "size", 		MutationRate.Common, 	0.15, 	0.1, 				2)
 	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
 	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
 	Genetics:registerValue( "seedrate", 	MutationRate.Uncommon, 	1, 		0)
 	Genetics:registerValue( "abiotic", 		MutationRate.Rare)
-	Genetics:registerValue( "hasflowers",	MutationRate.Rare)
+	Genetics:registerValue( "hasblossoms",	MutationRate.Rare)
 	Genetics:registerValue( "hasleaves",	MutationRate.Rare)
-	Genetics:registerValue( "flowerrate", 	MutationRate.Common, 	1, 		0)
+	Genetics:registerValue( "blossomrate", 	MutationRate.Common, 	1, 		0)
+	Genetics:registerValue( "blossomgrowspeed", MutationRate.Common,0.1, 	1)
 	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
+	--Genetics:registerValue( "blossomtype", 	MutationRate.Rare, 	1, 		1, amount of blossoms we have)
+	--Genetics:registerValue( "planttype", 	MutationRate.Rare, 	1, 		1, amount of plants we have)
 
 
 
 	seed.genetics = {
-		planttype = PlantType.Flower,
+		plantstyle = PlantStyle.Flower,
+		planttype = 1,
 		size = 1.0,
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
 		seedrate = 2,
 		abiotic = true,
-		hasflowers = true,
+		hasblossoms = true,
 		hasleaves = false,
-		flowerrate = 2,
+		blossomrate = 2,
+		blossomtype = 1,
+		blossomgrowspeed = 3.0,
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)
