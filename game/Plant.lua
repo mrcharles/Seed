@@ -37,21 +37,37 @@ Plant.sizes = {
 	},
 }
 
+function Plant:getKeyName(t, val)
+	for k,v in pairs(t) do
+		if v == val then
+			return k
+		end
+	end
+
+	assert(false)
+end
+
+function Plant:makeDataName()
+	return string.format("plantdata/%s%ddata.lua", self:getKeyName(PlantType, self.genetics.planttype), 1)
+end
+
 function Plant:init(seed)
 	self.state = PlantState.Sprout
 
 	--straight copy for right now
 	self.genetics = seed.genetics
 
-	self.size = self.sizes[self.genetics.planttype][self.state]
-
 	self.growtime = 0
 
 	self.leaves = {}
 	self.flowers = {}
 
-	self.flowerpoints = {}
-	self.leavespoints = {}
+	--load our data
+	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
+	self.data = chunk()
+
+	self.size = self:getSize()
+
 
 	--self.pos = seed.pos
 	Base.init(self)
@@ -86,6 +102,10 @@ function Plant:updateState(state, dt)
 
 end
 
+function Plant:getSize()
+	return vector(self.data[self.state].size)
+end
+
 function Plant:update(dt)
 	self.growtime = self.growtime + dt
 	if self.growtime > self.genetics.growspeed then
@@ -93,7 +113,7 @@ function Plant:update(dt)
 		if self.state < PlantState.Mature then
 			self.state = self.state + 1
 
-			self.size = self.sizes[self.genetics.planttype][self.state] * self.genetics.size
+			self.size = self:getSize() * self.genetics.size
 		elseif not self.seeded then -- seed
 			print('seeding')
 			for i=1,self.genetics.seedrate do
@@ -119,4 +139,22 @@ function Plant:draw()
 
 	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
 	love.graphics.pop()
+
+	if DRAWPLANTS then
+		local state = self.data[self.state]
+
+		if state.flowerpoints then 
+			for i,v in ipairs(state.flowerpoints) do
+				love.graphics.setColor(255,0,0)
+				love.graphics.circle("fill",self.pos.x + v[1], self.pos.y - v[2], 3)
+			end
+		end
+
+		if state.stems then
+			for i,v in ipairs(state.stems) do
+				love.graphics.setColor(255,255,255)
+				love.graphics.line(self.pos.x + v[1][1], self.pos.y - v[1][2], self.pos.x + v[2][1], self.pos.y - v[2][2])
+			end
+		end
+	end
 end
