@@ -248,6 +248,11 @@ function World:create()
 	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
 	Genetics:registerValue( "seedrate", 	MutationRate.Uncommon, 	1, 		0)
 	Genetics:registerValue( "abiotic", 		MutationRate.Rare)
+	Genetics:registerValue( "hasflowers",	MutationRate.Rare)
+	Genetics:registerValue( "hasleaves",	MutationRate.Rare)
+	Genetics:registerValue( "flowerrate", 	MutationRate.Common, 	1, 		0)
+	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
+
 
 
 	seed.genetics = {
@@ -256,7 +261,10 @@ function World:create()
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
 		seedrate = 2,
-		abiotic = true
+		abiotic = true,
+		hasflowers = true,
+		hasleaves = false,
+		flowerrate = 2,
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)

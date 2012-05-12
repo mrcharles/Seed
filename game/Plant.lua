@@ -18,10 +18,10 @@ Plant = Base:new()
 
 Plant.sizes = {
 	{ -- flower
-	vector( 10, 10 ),
-	vector( 15, 20 ),
-	vector( 20, 40 ),
-	vector( 25, 60 )
+	vector( 5, 10 ),
+	vector( 6, 20 ),
+	vector( 6, 40 ),
+	vector( 8, 60 )
 	},
 	{ -- Bush
 	vector( 10, 10 ),
@@ -46,6 +46,13 @@ function Plant:init(seed)
 	self.size = self.sizes[self.genetics.planttype][self.state]
 
 	self.growtime = 0
+
+	self.leaves = {}
+	self.flowers = {}
+
+	self.flowerpoints = {}
+	self.leavespoints = {}
+
 	--self.pos = seed.pos
 	Base.init(self)
 end
@@ -70,12 +77,22 @@ function Plant:makeSeed()
 	return seed
 end
 
+function Plant:getFlowerPosition()
+	local center = vector(self.pos.x, self.pos.y - self.size.y)
+	local range = self.size.y 
+end
+
+function Plant:updateState(state, dt)
+
+end
+
 function Plant:update(dt)
 	self.growtime = self.growtime + dt
 	if self.growtime > self.genetics.growspeed then
 		self.growtime = 0
 		if self.state < PlantState.Mature then
 			self.state = self.state + 1
+
 			self.size = self.sizes[self.genetics.planttype][self.state] * self.genetics.size
 		elseif not self.seeded then -- seed
 			print('seeding')
@@ -96,7 +113,8 @@ end
 function Plant:draw()
 	love.graphics.push()
 	love.graphics.translate(self.pos.x, self.pos.y)
-	love.graphics.setColor(self.genetics.color)
+	--love.graphics.setColor(self.genetics.color)
+	love.graphics.setColor(0, 113, 8)
 
 
 	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)

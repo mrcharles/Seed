@@ -75,7 +75,7 @@ function love.load()
 	-- effect:send('balls', unpack(balls))
 	-- effect:send('palette', {0, 0, 0, 10})
 
-	DRAWPHYSICS = true
+	--DRAWPHYSICS = true
 
 	player = Player:new()
 	player:init()
