@@ -62,6 +62,7 @@ function Plant:makeSeed()
 	local seed = Seed:new()
 	seed:init(self)
 	seed.pos = self.pos
+	self.world:addObject(seed)
 	self.world:addCirclePhysics(seed)
 
 	seed.genetics = Genetics:asexualMutate(self.genetics)
@@ -75,7 +76,7 @@ function Plant:update(dt)
 		self.growtime = 0
 		if self.state < PlantState.Mature then
 			self.state = self.state + 1
-			self.size = self.sizes[self.genetics.planttype][self.state]
+			self.size = self.sizes[self.genetics.planttype][self.state] * self.genetics.size
 		elseif not self.seeded then -- seed
 			print('seeding')
 			for i=1,self.genetics.seedrate do

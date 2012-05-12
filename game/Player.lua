@@ -95,7 +95,6 @@ function Player:plant(pos)
 	if seed then
 		local plant = seed:makePlant()
 		plant.pos = pos
-
 		self.world:addObject(plant)
 	end
 

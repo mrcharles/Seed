@@ -114,11 +114,14 @@ function love.mousepressed(x, y, button)
 	if button == "l" then
 		local hit = world:getClickedObject(x, y)
 		if hit then
+			print("moving to pick up a thing")
 			player:moveToObjAndDo(hit, "pickUp", hit)
 		elseif player:hasSeeds() then
+			print("moving to plant a seed")
 			local plantpos = vector(x,y)
 			player:moveToAndDo( plantpos, "plant", plantpos )
 		else
+			print('just moving')
 			player:moveTo( vector(x,y) )
 		end
 	end
