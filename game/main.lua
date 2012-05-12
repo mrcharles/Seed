@@ -81,7 +81,8 @@ function love.load()
 	-- effect:send('balls', unpack(balls))
 	-- effect:send('palette', {0, 0, 0, 10})
 
-	DRAWPHYSICS = true
+	--DRAWPHYSICS = true
+	--DRAWPLANTS = true
 
 	player = Player:new()
 	player:init()
@@ -203,6 +204,12 @@ function love.keyreleased( key, unicode )
 			DRAWPHYSICS = false
 		else
 			DRAWPHYSICS = true
+		end
+	elseif key == "f9" then
+		if DRAWPLANTS then
+			DRAWPLANTS = false
+		else
+			DRAWPLANTS = true
 		end
 	end
 
