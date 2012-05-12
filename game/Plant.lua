@@ -1,5 +1,6 @@
 require "Base"
 require "Genetics"
+require "Tools"
 
 PlantState = {
 	Sprout = 1,
@@ -19,6 +20,8 @@ PlantStyle = {
 Plant = Base:new()
 
 Plant.blossomfrequency = 0.3
+Plant.leavesfrequency = 0.2
+
 Plant.sizes = {
 	{ -- flower
 	vector( 5, 10 ),
@@ -57,6 +60,11 @@ end
 function Plant:makeBlossomName()
 	return string.format("plantdata/blossom%ddata.lua", self.genetics.blossomtype)
 end
+
+function Plant:makeLeavesName()
+	return string.format("plantdata/leaf%ddata.lua", self.genetics.leavestype)
+end
+
 
 function Plant:init(seed)
 	self.state = PlantState.Sprout
@@ -116,9 +124,26 @@ function Plant:hasBlossomPoints()
 
 end
 
+function Plant:hasStems()
+	local state = self.data[self.state]
+
+	if state.stems then
+		for i,stem in ipairs(state.stems) do
+			if not stem.full then
+				return true
+			end
+		end
+	end
+end
+
 --this shit is going to spam memroy like a motherfucker
 function Plant:loadBlossomData()
 	local chunk = love.filesystem.load( self:makeBlossomName() ) -- load the chunk 
+	return chunk()
+end
+
+function Plant:loadLeavesData()
+	local chunk = love.filesystem.load( self:makeLeavesName() )
 	return chunk()
 end
 
@@ -136,6 +161,77 @@ function Plant:sproutBlossom()
 	table.insert(self.blossoms, blossom)
 end
 
+function Plant:getLeavesOnStem(idx)
+	local count = 0
+	for i,leaf in ipairs(self.leaves) do
+		if leaf.stem == idx then
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
+
+function Plant:getStem()
+	-- look through stems, find out how many leaves we have on a stem, return that stem if we can fit a new leaf
+	local state = self.data[self.state]
+	if state.stems then
+		for i,stem in ipairs(state.stems) do
+			print("checking new stem...")
+			if not stem.full then 
+				local count = self:getLeavesOnStem(i)
+
+				local min = math.floor( self.genetics.leavesdensity )
+				local max = math.ceil( self.genetics.leavesdensity )
+				local r = self.genetics.leavesdensity - min
+
+				print( string.format("min is %d and max is %d and count is %d", min, max, count))
+
+				if count == min and math.random() > r then
+					stem.full = true
+				elseif count >= max then
+					stem.full = true
+				end
+
+				return i
+			end
+		end
+	end
+end
+
+function Plant:getStemPos(idx, r)
+	local stem = self.data[self.state].stems[idx]
+
+	if stem == nil then
+		print("wtf")
+	end
+
+	return Tools:lerp( vector( stem[1] ), vector( stem[2] ), r)
+
+end
+
+function Plant:sproutLeaves()
+	if self.leavesdata == nil then
+		self.leavesdata = self:loadLeavesData()
+	end
+	local stem = self:getStem()
+
+	local leaf = {
+		stem = stem,
+		pos = math.random(),
+		state = PlantState.Baby,
+		growtime = Genetics:mutateValue("leavesgrowspeed", self.genetics.leavesgrowspeed),
+	}
+
+	table.insert(self.leaves, leaf)
+end
+
+function Plant:getBlossomPoint(idx)
+	return vector( self.data[self.state].blossompoints[idx])
+end
+
+
 function Plant:updateParts(dt)
 
 	if self.nextblossomtime then
@@ -147,6 +243,18 @@ function Plant:updateParts(dt)
 		end
 	elseif self:hasBlossomPoints() then
 		self.nextblossomtime = self.blossomfrequency * math.random()
+	end
+
+	if self.nextleavestime then
+		self.nextleavestime = self.nextleavestime - dt
+		if self.nextleavestime <= 0 then
+			print('leaving... (lol)')
+			self:sproutLeaves()
+			self.nextleavestime = nil
+		end
+	elseif self:hasStems() then
+		self.nextleavestime = self.leavesfrequency * math.random()
+		print("MAKE MORE LEAVES!")
 	end
 end
 
@@ -189,11 +297,18 @@ function Plant:update(dt)
 		end
 	end
 
-	self:updateParts(dt)
-end
+	--grow leaves
+	for i,leaf in ipairs(self.leaves) do
+		if leaf.state < PlantState.Mature then
+			leaf.growtime = leaf.growtime - dt
+			if leaf.growtime <= 0.0 then
+				leaf.state = leaf.state + 1
+				leaf.growtime = Genetics:mutateValue("leavesgrowspeed", self.genetics.leavesgrowspeed)
+			end
+		end
+	end
 
-function Plant:getBlossomPoint(idx)
-	return vector( self.data[self.state].blossompoints[idx])
+	self:updateParts(dt)
 end
 
 function Plant:draw()
@@ -216,6 +331,21 @@ function Plant:draw()
 		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
 
 		love.graphics.pop()
+	end
+
+	--now draw our leaves!
+	for i,leaf in ipairs(self.leaves) do
+		love.graphics.push()
+		
+		local point = self:getStemPos( leaf.stem, leaf.pos )
+		love.graphics.translate(point.x, point.y)
+
+		love.graphics.setColor( 0, 255, 0 )
+		local size = self.leavesdata[leaf.state].size;
+		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+
+		love.graphics.pop()
+
 	end
 
 	love.graphics.pop()

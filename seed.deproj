@@ -4,6 +4,15 @@
     <filename>game\Base.lua</filename>
   </file>
   <file>
+    <filename>game\Genetics.lua</filename>
+  </file>
+  <file>
+    <filename>game\LayeredSprite.lua</filename>
+  </file>
+  <file>
+    <filename>game\PaletteEffect.lua</filename>
+  </file>
+  <file>
     <filename>game\Plant.lua</filename>
   </file>
   <file>
@@ -23,5 +32,8 @@
   </file>
   <file>
     <filename>game\main.lua</filename>
+  </file>
+  <file>
+    <filename>game\spritemanager.lua</filename>
   </file>
 </project>

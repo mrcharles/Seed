@@ -253,7 +253,10 @@ function World:create()
 	Genetics:registerValue( "blossomrate", 	MutationRate.Common, 	1, 		0)
 	Genetics:registerValue( "blossomgrowspeed", MutationRate.Common,0.1, 	1)
 	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
+	Genetics:registerValue( "leavesgrowspeed", MutationRate.Common, 0.1, 	1)
+	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
 	--Genetics:registerValue( "blossomtype", 	MutationRate.Rare, 	1, 		1, amount of blossoms we have)
+	--Genetics:registerValue( "leavestype", 	MutationRate.Rare, 	1, 		1, amount of leaves we have)
 	--Genetics:registerValue( "planttype", 	MutationRate.Rare, 	1, 		1, amount of plants we have)
 
 
@@ -266,8 +269,12 @@ function World:create()
 		color = { 128, 0, 128 },
 		seedrate = 2,
 		abiotic = true,
+		hasleaves = true,
+		leavesrate = 4,
+		leavestype = 1,
+		leavesdensity = 0.7,
+		leavesgrowspeed = 2.0,
 		hasblossoms = true,
-		hasleaves = false,
 		blossomrate = 2,
 		blossomtype = 1,
 		blossomgrowspeed = 3.0,
