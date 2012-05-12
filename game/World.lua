@@ -12,6 +12,11 @@ World.minx = -2000
 World.maxx = 2000
 World.thickness = 100
 
+World.radiationdensity = 0.1
+World.radiationrange = 3
+World.baserads = 0.5
+World.radiationfalloff = 2.5
+
 World.groundresolution = 50
 World.ground = {}
 
@@ -121,6 +126,11 @@ function World:debugDrawGround()
 		local a = slice.radiation * 255
 		love.graphics.setColor(255, 0, 0, a)
 		love.graphics.line(x, y, mx, y)
+		--draw it as a vertical line too cause ugh
+		love.graphics.setColor(255,0,0)
+		local nx = x + (mx - x) * 0.5
+		love.graphics.line(nx, y, nx, y - slice.radiation * 100)
+
 
 		-- draw nutrition as a brown line
 		local nx = x + (mx - x) * 0.4
@@ -173,6 +183,44 @@ function World:addCirclePhysics(obj)
 	--circle.body:applyForce(0,1)
 end
 
+function World:addRadiation(slice, rads)
+	--if slice.radiation == 0.0 then 
+	--	slice.radiation = slice.radiation + self.baserads + rads
+	--else
+		slice.radiation = slice.radiation + rads
+	--end
+end
+
+function World:irradiate()
+	local slices = (self.maxx - self.minx) / self.groundresolution
+	local radcount = self.radiationdensity * slices
+
+	for i=1,radcount do
+		local sliceidx = math.random(slices) -- use this for even spacing: i * slices/radcount
+		local slice = self.ground[sliceidx]
+		local rads = math.random() * (1 - self.baserads)
+		self:addRadiation(slice, self.baserads + rads)
+		for i=-self.radiationrange,self.radiationrange do
+			if i ~= 0 and sliceidx + i >= 1 and sliceidx + i <= slices then
+				local s = self.ground[sliceidx + i]
+				self:addRadiation(s, (slice.radiation)* ( math.pow(1 / self.radiationfalloff, math.abs(i)) ))
+			end
+		end
+	end
+end
+
+function World:radReport()
+	local min = 10000
+	local max = 0
+
+	for i,v in ipairs(self.ground) do
+		min = math.min(min, v.radiation)
+		max = math.max(max, v.radiation)
+	end
+
+	print( string.format("RADIATION REPORT: Min: %f, Max: %f", min, max))
+end
+
 function World:create()
 	--initialize our ground data
 	local slices = (self.maxx - self.minx) / self.groundresolution
@@ -180,12 +228,14 @@ function World:create()
 	 	local slice = {
 	 		nutrition = math.random() * 0.2,
 	 		water = math.random() * 0.2,
-	 		radiation = math.random() * 0.6
+	 		radiation = 0.0
 		}
 		table.insert(self.ground, slice)
-	 end 
+	end 
 
+	self:irradiate()
 
+	self:radReport()
 
 	--add initial seed somewhere:
 	local seed = Seed:new()
@@ -197,6 +247,7 @@ function World:create()
 	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
 	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
 	Genetics:registerValue( "seedrate", 	MutationRate.Uncommon, 	1, 		0)
+	Genetics:registerValue( "abiotic", 		MutationRate.Rare)
 
 
 	seed.genetics = {
@@ -204,7 +255,8 @@ function World:create()
 		size = 1.0,
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
-		seedrate = 3
+		seedrate = 2,
+		abiotic = true
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)

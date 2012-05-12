@@ -83,7 +83,7 @@ function Plant:update(dt)
 				local dir = vector( 2 * math.random() - 1, -1)
 
 				local seed = self:makeSeed()
-				seed:pulse( dir:normalized(), 100)
+				seed:pulse( dir:normalized(), 70)
 				self.seeded = true
 
 			end
