@@ -1,6 +1,7 @@
 require "Base"
 require "hump.vector"
 require "spritemanager"
+require "PaletteEffect"
 
 LayeredSprite = Base:new()
 LayeredSprite.position = vector(50, 50)
@@ -48,8 +49,8 @@ function LayeredSprite:update(dt)
 end
 
 function LayeredSprite:draw()
-	--LayeredSprite.effect:setEffect()
+	LayeredSprite.effect:setEffect()
 	LayeredSprite.baseLayer:draw()
-	--LayeredSprite.effect:clearEffect()
+	LayeredSprite.effect:clearEffect()
 	LayeredSprite.topLayer:draw()
 end

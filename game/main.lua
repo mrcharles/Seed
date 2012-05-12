@@ -2,6 +2,9 @@ vector = require "hump.vector"
 camera = require "hump.camera"
 require "Player"
 require "World"
+require "LayeredSprite"
+require "RainEffect"
+require "WindEffect"
 
 local balls = {
 	{400,300}, -- this one will be controlled by the mouse
@@ -14,6 +17,9 @@ local balls = {
 	{50,50}, {50,550}, {750,50}, {750,550}
 }
 
+testLayeredSprite = {}
+testRainEffect = {}
+testWindEffect = {}
 
 function love.load()
 	 -- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
@@ -89,6 +95,16 @@ function love.load()
 	player.world = world
 
 	love.graphics.setBackgroundColor(255, 255, 255)
+
+	testLayeredSprite = LayeredSprite:new()
+	testLayeredSprite:load("dude", "dude")
+	testLayeredSprite.speed = 100
+
+	testRainEffect = RainEffect:new()
+	testRainEffect:load("raindrop.png", 500)
+
+	testWindEffect = WindEffect:new()
+	testWindEffect:load("wind_leaf.png", 500)
 end
 
 function love.draw()
@@ -97,6 +113,10 @@ function love.draw()
 	world:draw()
 	--love.graphics.setPixelEffect(effect)
 	--love.graphics.rectangle('fill', 0,0,love.graphics.getWidth(), love.graphics.getHeight())
+
+	testLayeredSprite:draw()
+	testRainEffect:draw()
+	testWindEffect:draw()
 
 	player:draw()
 	cam:detach()
@@ -108,6 +128,26 @@ function love.update(dt)
 	end
 	world:update(dt)
 	player:update(dt)
+
+	if love.keyboard.isDown("right") then
+		testLayeredSprite.position.x = testLayeredSprite.position.x + (testLayeredSprite.speed * dt)
+		--ninja.flipH = false
+		--testLayeredSprite:setAnimation("runRight", true)
+	elseif love.keyboard.isDown("left") then
+		testLayeredSprite.position.x = testLayeredSprite.position.x - (testLayeredSprite.speed * dt)
+		--ninja.flipH = true
+		--testLayeredSprite:setAnimation("runLeft", true)
+	end
+
+	if love.keyboard.isDown("down") then
+		testLayeredSprite.position.y = testLayeredSprite.position.y + (testLayeredSprite.speed * dt)
+	elseif love.keyboard.isDown("up") then
+		testLayeredSprite.position.y = testLayeredSprite.position.y - (testLayeredSprite.speed * dt)
+	end
+	testLayeredSprite:update(dt)
+
+	testRainEffect:update(dt)
+	testWindEffect:update(dt)
 end
 
 function love.mousepressed(x, y, button)
