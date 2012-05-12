@@ -77,6 +77,8 @@ function Plant:init(seed)
 	self.leaves = {}
 	self.blossoms = {}
 
+	self.stemsfull = {}
+
 	--load our data
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
 	self.data = chunk()
@@ -129,7 +131,7 @@ function Plant:hasStems()
 
 	if state.stems then
 		for i,stem in ipairs(state.stems) do
-			if not stem.full then
+			if not self.stemsfull[i] then
 				return true
 			end
 		end
@@ -179,7 +181,7 @@ function Plant:getStem()
 	if state.stems then
 		for i,stem in ipairs(state.stems) do
 			print("checking new stem...")
-			if not stem.full then 
+			if not self.stemsfull[i] then 
 				local count = self:getLeavesOnStem(i)
 
 				local min = math.floor( self.genetics.leavesdensity )
@@ -189,9 +191,9 @@ function Plant:getStem()
 				print( string.format("min is %d and max is %d and count is %d", min, max, count))
 
 				if count == min and math.random() > r then
-					stem.full = true
+					self.stemsfull[i] = true
 				elseif count >= max then
-					stem.full = true
+					self.stemsfull[i] = true
 				end
 
 				return i
@@ -323,7 +325,7 @@ function Plant:draw()
 	for i,blossom in ipairs(self.blossoms) do
 		love.graphics.push()
 		
-		local point = self:getBlossomPoint(blossom.blossompoint)
+		local point = self:getBlossomPoint(blossom.blossompoint) * self.genetics.size
 		love.graphics.translate(point.x, point.y)
 
 		love.graphics.setColor( self.genetics.color )
@@ -337,7 +339,7 @@ function Plant:draw()
 	for i,leaf in ipairs(self.leaves) do
 		love.graphics.push()
 		
-		local point = self:getStemPos( leaf.stem, leaf.pos )
+		local point = self:getStemPos( leaf.stem, leaf.pos ) * self.genetics.size
 		love.graphics.translate(point.x, point.y)
 
 		love.graphics.setColor( 0, 255, 0 )
