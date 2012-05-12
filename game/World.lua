@@ -195,7 +195,7 @@ function World:create()
 	Genetics:registerValue( "planttype", 	MutationRate.Rare, 		1, 		PlantType.Flower, 	PlantType.Tree, true)
 	Genetics:registerValue( "size", 		MutationRate.Common, 	0.15, 	0.1, 				2)
 	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
-	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	0.1, 	0, 					255)
+	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
 	Genetics:registerValue( "seedrate", 	MutationRate.Uncommon, 	1, 		0)
 
 
