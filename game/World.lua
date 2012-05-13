@@ -269,13 +269,13 @@ function World:create()
 	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
 	--Genetics:registerValue( "blossomtype", 	MutationRate.Rare, 	1, 		1, amount of blossoms we have)
 	--Genetics:registerValue( "leavestype", 	MutationRate.Rare, 	1, 		1, amount of leaves we have)
-	--Genetics:registerValue( "planttype", 	MutationRate.Rare, 	1, 		1, amount of plants we have)
+	Genetics:registerValue( "planttype", 	MutationRate.Rare, 		1, 		1, 					2)
 
 
 
 	seed.genetics = {
 		plantstyle = PlantStyle.Flower,
-		planttype = 1,
+		planttype = 2,
 		size = 1.0,
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
