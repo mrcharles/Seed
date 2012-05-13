@@ -63,6 +63,8 @@ function createSprite(strData, strAnimation)
 			self.currentFrame = 1
 			self.animCounter = animation[self.currentFrame - 1].duration
 		end
+
+		self.flipH = animation.flipH
 	end
 	
 	function sprite:hasAnimation(strAnimation)
