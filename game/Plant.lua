@@ -64,7 +64,7 @@ function Plant:makeBlossomName()
 end
 
 function Plant:makeLeavesName()
-	return string.format("plantdata/leaf%ddata.lua", self.genetics.leavestype)
+	return string.format("leaf_%c", 96 + self.genetics.leavestype)
 end
 
 function Plant:loadSprite( state )
@@ -163,8 +163,9 @@ function Plant:loadBlossomData()
 end
 
 function Plant:loadLeavesData()
-	local chunk = love.filesystem.load( self:makeLeavesName() )
-	return chunk()
+	local testLayeredSprite = LayeredSprite:new()
+	testLayeredSprite:load(self:makeLeavesName(), "leaf_baby")
+	return testLayeredSprite
 end
 
 function Plant:sproutBlossom()
@@ -231,9 +232,7 @@ function Plant:getStemPos(idx, r)
 end
 
 function Plant:sproutLeaves()
-	if self.leavesdata == nil then
-		self.leavesdata = self:loadLeavesData()
-	end
+
 	local stem = self:getStem()
 
 	local leaf = {
@@ -241,6 +240,7 @@ function Plant:sproutLeaves()
 		pos = math.random(),
 		state = PlantState.Baby,
 		growtime = Genetics:mutateValue("leavesgrowspeed", self.genetics.leavesgrowspeed),
+		sprite = self:loadLeavesData()
 	}
 
 	table.insert(self.leaves, leaf)
@@ -325,6 +325,7 @@ function Plant:update(dt)
 			leaf.growtime = leaf.growtime - dt
 			if leaf.growtime <= 0.0 then
 				leaf.state = leaf.state + 1
+				leaf.sprite:setAnimation("leaf_"..self:getKeyName(PlantState, leaf.state))
 				leaf.growtime = Genetics:mutateValue("leavesgrowspeed", self.genetics.leavesgrowspeed)
 			end
 		end
@@ -373,9 +374,12 @@ function Plant:draw()
 		local point = self:getStemPos( leaf.stem, leaf.pos ) * self.genetics.size
 		love.graphics.translate(point.x, point.y)
 
-		love.graphics.setColor( 0, 255, 0 )
-		local size = self.leavesdata[leaf.state].size;
-		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+		--love.graphics.setColor( 0, 255, 0 )
+		love.graphics.scale(self.genetics.size)
+		
+		leaf.sprite:setPosition(vector(0,0))
+		leaf.sprite:draw()
+		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
 
 		love.graphics.pop()
 
