@@ -5,7 +5,7 @@ local spriteData = {}
 function getSpriteData(strData)
 	if spriteData[strData] == nil then
 		local chunk = love.filesystem.load( "res/sprites/"..strData..".lua" ) -- load the chunk 
-		spriteData[strData] = chunk("res/sprites")
+		spriteData[strData] = chunk("res/sprites/")
 	end
 	
 	return spriteData[strData]

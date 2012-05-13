@@ -1,6 +1,7 @@
 require "Base"
 require "Genetics"
 require "Tools"
+require "spritemanager"
 
 PlantState = {
 	Sprout = 1,
@@ -54,7 +55,7 @@ function Plant:getKeyName(t, val)
 end
 
 function Plant:makeDataName()
-	return string.format("plantdata/%s%ddata.lua", self:getKeyName(PlantStyle, self.genetics.plantstyle), self.genetics.planttype)
+	return string.format("plantdata/%s_%c_data.lua", string.lower(self:getKeyName(PlantStyle, self.genetics.plantstyle)), 96 + self.genetics.planttype)
 end
 
 function Plant:makeBlossomName()
@@ -65,6 +66,9 @@ function Plant:makeLeavesName()
 	return string.format("plantdata/leaf%ddata.lua", self.genetics.leavestype)
 end
 
+function Plant:loadSprite( state )
+	self.data[state].sprite = spritemanager.createSprite(self.data[state].sprite, self.data[state].anim)
+end
 
 function Plant:init(seed)
 	self.state = PlantState.Sprout
@@ -83,6 +87,15 @@ function Plant:init(seed)
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
 	self.data = chunk()
 
+	-- we're only loading three states from the data, so we need to hack some shits
+	for i=4,2,-1 do
+		self.data[i] = self.data[i-1]
+	end
+
+
+	self:loadSprite( PlantState.Baby )
+	self:loadSprite( PlantState.Young )
+	self:loadSprite( PlantState.Mature )
 	--self.pos = seed.pos
 	Base.init(self)
 
@@ -318,9 +331,16 @@ function Plant:draw()
 	love.graphics.push()
 	love.graphics.translate(self.pos.x, self.pos.y)
 	--love.graphics.setColor(self.genetics.color)
-	love.graphics.setColor(0, 113, 8)
+	--love.graphics.setColor(0, 113, 8)
 
-	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+	--love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+
+	if self.data[self.state].sprite then
+		love.graphics.push()
+		love.graphics.scale(self.genetics.size)
+		self.data[self.state].sprite:draw()
+		love.graphics.pop()
+	end
 
 	--now draw our blossoms!
 	for i,blossom in ipairs(self.blossoms) do
