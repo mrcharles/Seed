@@ -114,6 +114,8 @@ function love.load()
 
 	titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
 
+	music = love.audio.newSource("legend.mp3", "stream")
+	love.audio.play(music)
 end
 
 function love.draw()
