@@ -17,6 +17,15 @@ function createSprite(strData, strAnimation)
 	if strData ~= nil then
 		sprite.sprData = getSpriteData(strData)
 		sprite.strData = strData
+
+		-- --hack fix for sprite animations
+		-- if sprite.strData and sprite.strData.animations then
+		-- 	for i,anim in ipairs(sprite.strData.animations) do
+		-- 		if anim[1] == nil then
+		-- 			anim[1] = anim[0]
+		-- 		end
+		-- 	end
+		-- end
 	end
 	
 	function sprite:setData(strData, strAnimation, keepTime)
@@ -26,6 +35,15 @@ function createSprite(strData, strAnimation)
 
 		self.sprData = getSpriteData(strData)
 		self.strData = strData
+
+		--hack fix for sprite animations
+		-- if self.strData and self.strData.animations then
+		-- 	for i,anim in ipairs(self.strData.animations) do
+		-- 		if anim[1] == nil then
+		-- 			anim[1] = anim[0]
+		-- 		end
+		-- 	end
+		-- end
 		
 		if strAnimation ~= nil then
 			self:setAnimation(strAnimation, keepTime)

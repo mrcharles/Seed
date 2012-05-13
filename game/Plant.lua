@@ -1,6 +1,8 @@
 require "Base"
 require "Genetics"
 require "Tools"
+require "spritemanager"
+require "LayeredSprite"
 
 PlantState = {
 	Sprout = 1,
@@ -46,7 +48,7 @@ Plant.sizes = {
 function Plant:getKeyName(t, val)
 	for k,v in pairs(t) do
 		if v == val then
-			return k
+			return string.lower(k)
 		end
 	end
 
@@ -54,17 +56,20 @@ function Plant:getKeyName(t, val)
 end
 
 function Plant:makeDataName()
-	return string.format("plantdata/%s%ddata.lua", self:getKeyName(PlantStyle, self.genetics.plantstyle), self.genetics.planttype)
+	return string.format("plantdata/%s_%c_data.lua", string.lower(self:getKeyName(PlantStyle, self.genetics.plantstyle)), 96 + self.genetics.planttype)
 end
 
 function Plant:makeBlossomName()
-	return string.format("plantdata/blossom%ddata.lua", self.genetics.blossomtype)
+	return string.format("blossom_%c", 96 + self.genetics.blossomtype)
 end
 
 function Plant:makeLeavesName()
 	return string.format("plantdata/leaf%ddata.lua", self.genetics.leavestype)
 end
 
+function Plant:loadSprite( state )
+	self.data[state].sprite = spritemanager.createSprite(self.data[state].sprite, self.data[state].anim)
+end
 
 function Plant:init(seed)
 	self.state = PlantState.Sprout
@@ -77,15 +82,27 @@ function Plant:init(seed)
 	self.leaves = {}
 	self.blossoms = {}
 
+	self.stemsfull = {}
+
 	--load our data
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
 	self.data = chunk()
 
+	-- we're only loading three states from the data, so we need to hack some shits
+	for i=4,2,-1 do
+		self.data[i] = self.data[i-1]
+	end
+
+
+	self:loadSprite( PlantState.Baby )
+	self:loadSprite( PlantState.Young )
+	self:loadSprite( PlantState.Mature )
+	--self.pos = seed.pos
+	Base.init(self)
+
 	self.size = self:getSize()
 
 
-	--self.pos = seed.pos
-	Base.init(self)
 end
 
 function Plant:onAddToWorld(world)
@@ -129,17 +146,20 @@ function Plant:hasStems()
 
 	if state.stems then
 		for i,stem in ipairs(state.stems) do
-			if not stem.full then
+			if not self.stemsfull[i] then
 				return true
 			end
 		end
 	end
 end
 
+
+
 --this shit is going to spam memroy like a motherfucker
 function Plant:loadBlossomData()
-	local chunk = love.filesystem.load( self:makeBlossomName() ) -- load the chunk 
-	return chunk()
+	local testLayeredSprite = LayeredSprite:new()
+	testLayeredSprite:load(self:makeBlossomName(), "blossom_baby")
+	return testLayeredSprite
 end
 
 function Plant:loadLeavesData()
@@ -149,13 +169,12 @@ end
 
 function Plant:sproutBlossom()
 
-	if self.blossomdata == nil then
-		self.blossomdata = self:loadBlossomData()
-	end
+	print("SPROUTING BLOSSOM")
 	local blossom  = {
 		blossompoint = self:getNewBlossomPoint(),
 		state = PlantState.Baby,
-		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
+		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed),
+		sprite = self:loadBlossomData()
 	}
 
 	table.insert(self.blossoms, blossom)
@@ -179,7 +198,7 @@ function Plant:getStem()
 	if state.stems then
 		for i,stem in ipairs(state.stems) do
 			print("checking new stem...")
-			if not stem.full then 
+			if not self.stemsfull[i] then 
 				local count = self:getLeavesOnStem(i)
 
 				local min = math.floor( self.genetics.leavesdensity )
@@ -189,9 +208,9 @@ function Plant:getStem()
 				print( string.format("min is %d and max is %d and count is %d", min, max, count))
 
 				if count == min and math.random() > r then
-					stem.full = true
+					self.stemsfull[i] = true
 				elseif count >= max then
-					stem.full = true
+					self.stemsfull[i] = true
 				end
 
 				return i
@@ -291,10 +310,13 @@ function Plant:update(dt)
 			blossom.growtime = blossom.growtime - dt
 			if blossom.growtime <= 0.0 then
 				blossom.state = blossom.state + 1
+				blossom.sprite:setAnimation("blossom_"..self:getKeyName(PlantState, blossom.state))
 				blossom.growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
 			end
 
 		end
+
+		blossom.sprite:update(dt)
 	end
 
 	--grow leaves
@@ -315,20 +337,31 @@ function Plant:draw()
 	love.graphics.push()
 	love.graphics.translate(self.pos.x, self.pos.y)
 	--love.graphics.setColor(self.genetics.color)
-	love.graphics.setColor(0, 113, 8)
+	--love.graphics.setColor(0, 113, 8)
 
-	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+	--love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+
+	if self.data[self.state].sprite then
+		love.graphics.push()
+		love.graphics.scale(self.genetics.size)
+		self.data[self.state].sprite:draw()
+		love.graphics.pop()
+	end
 
 	--now draw our blossoms!
 	for i,blossom in ipairs(self.blossoms) do
 		love.graphics.push()
 		
-		local point = self:getBlossomPoint(blossom.blossompoint)
+		local point = self:getBlossomPoint(blossom.blossompoint) * self.genetics.size
+		
 		love.graphics.translate(point.x, point.y)
 
-		love.graphics.setColor( self.genetics.color )
-		local size = self.blossomdata[blossom.state].size;
-		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+		--love.graphics.setColor( self.genetics.color )
+		--local size = self.blossomdata[blossom.state].size;
+		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+		love.graphics.scale(self.genetics.size)
+		blossom.sprite:setPosition(vector(0,0))
+		blossom.sprite:draw()
 
 		love.graphics.pop()
 	end
@@ -337,7 +370,7 @@ function Plant:draw()
 	for i,leaf in ipairs(self.leaves) do
 		love.graphics.push()
 		
-		local point = self:getStemPos( leaf.stem, leaf.pos )
+		local point = self:getStemPos( leaf.stem, leaf.pos ) * self.genetics.size
 		love.graphics.translate(point.x, point.y)
 
 		love.graphics.setColor( 0, 255, 0 )
@@ -368,4 +401,6 @@ function Plant:draw()
 			end
 		end
 	end
+
+	Base.draw(self)
 end

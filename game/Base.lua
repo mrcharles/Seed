@@ -46,7 +46,9 @@ function Base:setBounds(size, offset)
 end
 
 function Base:inBounds(point)
-	return Tools:pointInBounds(point, self.pos, self.bounds)
+	if self.bounds then
+		return Tools:pointInBounds(point, self.pos, self.bounds)
+	end
 end
 
 
