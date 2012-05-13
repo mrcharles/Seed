@@ -2,6 +2,7 @@ require "Base"
 require "Genetics"
 require "Tools"
 require "spritemanager"
+require "LayeredSprite"
 
 PlantState = {
 	Sprout = 1,
@@ -47,7 +48,7 @@ Plant.sizes = {
 function Plant:getKeyName(t, val)
 	for k,v in pairs(t) do
 		if v == val then
-			return k
+			return string.lower(k)
 		end
 	end
 
@@ -59,7 +60,7 @@ function Plant:makeDataName()
 end
 
 function Plant:makeBlossomName()
-	return string.format("plantdata/blossom%ddata.lua", self.genetics.blossomtype)
+	return string.format("blossom_%c", 96 + self.genetics.blossomtype)
 end
 
 function Plant:makeLeavesName()
@@ -152,10 +153,13 @@ function Plant:hasStems()
 	end
 end
 
+
+
 --this shit is going to spam memroy like a motherfucker
 function Plant:loadBlossomData()
-	local chunk = love.filesystem.load( self:makeBlossomName() ) -- load the chunk 
-	return chunk()
+	local testLayeredSprite = LayeredSprite:new()
+	testLayeredSprite:load(self:makeBlossomName(), "blossom_baby")
+	return testLayeredSprite
 end
 
 function Plant:loadLeavesData()
@@ -165,13 +169,11 @@ end
 
 function Plant:sproutBlossom()
 
-	if self.blossomdata == nil then
-		self.blossomdata = self:loadBlossomData()
-	end
 	local blossom  = {
 		blossompoint = self:getNewBlossomPoint(),
 		state = PlantState.Baby,
-		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
+		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed),
+		sprite = self:loadBlossomData()
 	}
 
 	table.insert(self.blossoms, blossom)
@@ -307,10 +309,13 @@ function Plant:update(dt)
 			blossom.growtime = blossom.growtime - dt
 			if blossom.growtime <= 0.0 then
 				blossom.state = blossom.state + 1
+				blossom.sprite:setAnimation("blossom_"..self:getKeyName(PlantState, blossom.state))
 				blossom.growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed)
 			end
 
 		end
+
+		blossom.sprite:update(dt)
 	end
 
 	--grow leaves
@@ -349,9 +354,12 @@ function Plant:draw()
 		local point = self:getBlossomPoint(blossom.blossompoint) * self.genetics.size
 		love.graphics.translate(point.x, point.y)
 
-		love.graphics.setColor( self.genetics.color )
-		local size = self.blossomdata[blossom.state].size;
-		love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+		--love.graphics.setColor( self.genetics.color )
+		--local size = self.blossomdata[blossom.state].size;
+		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
+		--love.graphics.scale(self.genetics.size)
+
+		blossom.sprite:draw()
 
 		love.graphics.pop()
 	end

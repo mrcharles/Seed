@@ -22,8 +22,8 @@ function LayeredSprite:load(strData, strAnimation)
 	LayeredSprite.topLayer:setData(LayeredSprite.topLayer.strData, LayeredSprite.topLayer.animation, true)
 	LayeredSprite.topLayer.sprData.image:setFilter("linear", "linear")
 
-	LayeredSprite.effect = PaletteEffect:new()
-	LayeredSprite.effect:load("res/sprites/"..strData.."_palette.png")
+	--LayeredSprite.effect = PaletteEffect:new()
+	--LayeredSprite.effect:load("res/sprites/"..strData.."_palette.png")
 end
 
 function LayeredSprite:setPosition(pos)
@@ -32,11 +32,11 @@ end
 
 function LayeredSprite:setAnimation(animation)
 	LayeredSprite.baseLayer:setAnimation(animation, true)
-	LayeredSprite.topLayer:setAnimation(animation, true)
+	LayeredSprite.topLayer:setAnimation(animation.."_cel", true)
 end
 
 function LayeredSprite:update(dt)
-	LayeredSprite.effect:update(dt)
+	--LayeredSprite.effect:update(dt)
 
 	LayeredSprite.baseLayer.x = LayeredSprite.position.x
 	LayeredSprite.baseLayer.y = LayeredSprite.position.y
@@ -49,8 +49,8 @@ function LayeredSprite:update(dt)
 end
 
 function LayeredSprite:draw()
-	LayeredSprite.effect:setEffect()
+	--LayeredSprite.effect:setEffect()
 	LayeredSprite.baseLayer:draw()
-	LayeredSprite.effect:clearEffect()
+	--LayeredSprite.effect:clearEffect()
 	LayeredSprite.topLayer:draw()
 end
