@@ -18,7 +18,7 @@ data.animations = {
 		scale=1
 	},
 	blossom_young={
-		[0]={u=50, v=0, w=32, h=34, offsetX=16, offsetY=33, duration=0.0333333},
+		[0]={u=50, v=0, w=32, h=34, offsetX=15, offsetY=32, duration=0.0333333},
 		scale=1
 	},
 }
