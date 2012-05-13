@@ -169,6 +169,7 @@ end
 
 function Plant:sproutBlossom()
 
+	print("SPROUTING BLOSSOM")
 	local blossom  = {
 		blossompoint = self:getNewBlossomPoint(),
 		state = PlantState.Baby,
@@ -352,13 +353,14 @@ function Plant:draw()
 		love.graphics.push()
 		
 		local point = self:getBlossomPoint(blossom.blossompoint) * self.genetics.size
+		
 		love.graphics.translate(point.x, point.y)
 
 		--love.graphics.setColor( self.genetics.color )
 		--local size = self.blossomdata[blossom.state].size;
 		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
-		--love.graphics.scale(self.genetics.size)
-
+		love.graphics.scale(self.genetics.size)
+		blossom.sprite:setPosition(vector(0,0))
 		blossom.sprite:draw()
 
 		love.graphics.pop()
