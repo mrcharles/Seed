@@ -269,7 +269,7 @@ function World:create()
 	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
 	--Genetics:registerValue( "blossomtype", 	MutationRate.Rare, 	1, 		1, amount of blossoms we have)
 	--Genetics:registerValue( "leavestype", 	MutationRate.Rare, 	1, 		1, amount of leaves we have)
-	Genetics:registerValue( "planttype", 	MutationRate.Rare, 		1, 		1, 					2)
+	Genetics:registerValue( "planttype", 	MutationRate.Uncommon, 		1, 		1, 					2)
 
 
 
