@@ -299,6 +299,65 @@ function World:create()
 	self:addObject(seed)
 	self:addCirclePhysics(seed)
 
+
+	--add initial seed somewhere:
+	local seed2 = Seed:new()
+	seed2:init()
+
+	seed2.genetics = {
+		plantstyle = PlantStyle.Flower,
+		planttype = 2,
+		size = 1.0,
+		growspeed = 10.0,
+		color = { 128, 0, 128 },
+		seedrate = 2,
+		abiotic = true,
+		hasleaves = true,
+		leavesrate = 4,
+		leavestype = 1,
+		leavesdensity = 0.7,
+		leavesgrowspeed = 8.0,
+		hasblossoms = true,
+		blossomrate = 2,
+		blossomtype = 3,
+		blossomgrowspeed = 12.0,
+		lifetime = 60
+	}
+
+	seed2.pos = self:randomSpot() + vector(0, -100)
+
+	self:addObject(seed2)
+	self:addCirclePhysics(seed2)
+
+	--add initial seed somewhere:
+	local seed3 = Seed:new()
+	seed3:init()
+
+	seed3.genetics = {
+		plantstyle = PlantStyle.Flower,
+		planttype = 2,
+		size = 1.0,
+		growspeed = 10.0,
+		color = { 128, 0, 128 },
+		seedrate = 2,
+		abiotic = true,
+		hasleaves = true,
+		leavesrate = 4,
+		leavestype = 1,
+		leavesdensity = 0.7,
+		leavesgrowspeed = 8.0,
+		hasblossoms = true,
+		blossomrate = 2,
+		blossomtype = 3,
+		blossomgrowspeed = 12.0,
+		lifetime = 60
+	}
+
+	seed3.pos = self:randomSpot() + vector(0, -100)
+
+	self:addObject(seed3)
+	self:addCirclePhysics(seed3)
+
 end
 
 function World:getClickedObject(x, y)

@@ -286,6 +286,8 @@ function Plant:getSize()
 end
 
 function Plant:update(dt)
+	dt = 1.5 * dt
+
 	self.lifetime = self.lifetime - dt
 
 	self.growtime = self.growtime + dt
