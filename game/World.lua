@@ -285,11 +285,11 @@ function World:create()
 		leavesrate = 4,
 		leavestype = 1,
 		leavesdensity = 0.7,
-		leavesgrowspeed = 2.0,
+		leavesgrowspeed = 8.0,
 		hasblossoms = true,
 		blossomrate = 2,
 		blossomtype = 1,
-		blossomgrowspeed = 3.0,
+		blossomgrowspeed = 12.0,
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)
