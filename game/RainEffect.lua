@@ -35,7 +35,7 @@ function RainEffect:draw()
 end
 
 function RainEffect:update(dt)
-	RainEffect.system:setPosition(math.random() * love.graphics.getWidth(), 0)
+	RainEffect.system:setPosition(math.random() * love.graphics.getWidth() * 2, 0)
 	RainEffect.system:update(dt)
 	RainEffect.system:start()
 end

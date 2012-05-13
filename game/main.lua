@@ -159,52 +159,91 @@ function love.update(dt)
 
 	testRainEffect:update(dt)
 	testWindEffect:update(dt)
+
+	if love.mouse.isDown("l") then
+		cameraDelta = 0
+		cameraPrev = 0
+
+		mouseXcurrent, mouseYcurrent = cam:worldCoords(love.mouse.getX(), love.mouse.getY())
+		cameraDelta = xPressed - mouseXcurrent
+		if cameraDelta > 5 then
+			mouseMoved = true
+		end
+		-- fake camera acceleration
+		cameraDelta = cameraDelta / 12
+
+		cameraPrev = cameraX
+		if cameraDelta > 0 then
+			if cameraX < gameRight then	
+				if cameraX + cameraDelta < gameRight then
+					--cameraDelta = 50
+				else
+					cameraDelta = gameRight - cameraPrev
+				end
+				cameraX = cameraPrev + cameraDelta
+				cam:move(cameraDelta, 0)
+			end
+		elseif cameraDelta < 0 then
+			if cameraX >= gameLeft then	
+				if cameraX + cameraDelta >= gameLeft then
+					--cameraDelta = 50
+				else
+					cameraDelta = gameLeft - cameraPrev
+				end
+				cameraX = cameraPrev + cameraDelta
+				cam:move(cameraDelta, 0)
+			end
+		end
+	end
 end
 
 function love.mousereleased(x, y, button)
-	if button == "l" then
-		local hit = world:getClickedObject(x, y)
-		if hit then
-			print("moving to pick up a thing")
-			player:moveToObjAndDo(hit, "pickUp", hit)
-		elseif player:hasSeeds() then
-			print("moving to plant a seed")
-			local plantpos = vector(x,y)
-			player:moveToAndDo( plantpos, "plant", plantpos )
-		else
-			print('just moving')
-			player:moveTo( vector(x,y) )
-		end
-	elseif  button == "wu" then
-		cameraZoom = cameraZoom + 0.1
-		cam = camera(cameraX, cameraY, cameraZoom, 0)
+	x,y = cam:worldCoords(x, y)
 
-		-- already correct coordinates, just fix edges with zoom
-	elseif  button == "wd" then
-		--if cameraZoom > 1 then
-			cameraZoom = cameraZoom - 0.1
-			cam = camera(cameraX, cameraY, cameraZoom, 0)
-		--end
+	if mouseMoved == false then
+		if button == "l" then
+			local hit = world:getClickedObject(x, y)
+			if hit then
+				print("moving to pick up a thing")
+				player:moveToObjAndDo(hit, "pickUp", hit)
+			elseif player:hasSeeds() then
+				print("moving to plant a seed")
+				local plantpos = vector(x,y)
+				player:moveToAndDo( plantpos, "plant", plantpos )
+			else
+				print('just moving')
+				player:moveTo( vector(x,y) )
+			end
+		-- elseif  button == "wu" then
+		-- 	cameraZoom = cameraZoom + 0.1
+		-- 	cam = camera(cameraX, cameraY, cameraZoom, 0)
+
+		-- 	-- already correct coordinates, just fix edges with zoom
+		-- elseif  button == "wd" then
+		-- 	--if cameraZoom > 1 then
+		-- 		cameraZoom = cameraZoom - 0.1
+		-- 		cam = camera(cameraX, cameraY, cameraZoom, 0)
+		-- 	--end
+		end
 	end
 end
 
-function getClampedPos(pos)
-	minx = gameLeft + (love.graphics.getWidth() / 2) / zoom;
-    maxx = gameRight - (love.graphics.getWidth()/ 2) / zoom;
-    miny = gameTop + (love.graphics.getHeight() / 2) / zoom;
-    maxy = gameBottom - (love.graphics.getHeigth() / 2) / zoom;
-
-    ret = vector(0, 0)
-
-    ret.x = math.min(math.max(pos.x, minx), maxx);
-    ret.y = math.min(math.max(pos.y, miny), maxy);
-    return ret
-end
-
+xPressed = 0
+yPressed = 0
+mouseMoved = false
 function love.mousepressed(x, y, button)
+	x,y = cam:worldCoords(x, y)
+
+	xPressed = x
+	yPressed = y
+
+	mouseMoved = false
+
 	if button == "l" then
 	elseif  button == "r" then
 	end
+
+
 end
 
 function love.keyreleased( key, unicode )
@@ -233,28 +272,28 @@ function love.keyreleased( key, unicode )
 			cameraX = cameraPrev + cameraDelta
 			cam:move(cameraDelta, 0)
 		end
-	elseif key == "down" then
-		cameraPrev = cameraY
-		if cameraY < gameBottom then	
-			if cameraY + 50 > gameBottom then
-				cameraDelta = gameBottom - cameraPrev
-			else
-				cameraDelta = 50
-			end
-			cameraY = cameraPrev + cameraDelta
-			cam:move(0, cameraDelta)
-		end
-	elseif key == "up" then
-		cameraPrev = cameraY
-		if cameraY > gameTop then
-			if cameraY - 50 < gameTop then
-				cameraDelta = cameraPrev - gameTop
-			else
-				cameraDelta = -50
-			end
-			cameraY = cameraPrev + cameraDelta
-			cam:move(0, cameraDelta)
-		end	
+	-- elseif key == "down" then
+	-- 	cameraPrev = cameraY
+	-- 	if cameraY < gameBottom then	
+	-- 		if cameraY + 50 > gameBottom then
+	-- 			cameraDelta = gameBottom - cameraPrev
+	-- 		else
+	-- 			cameraDelta = 50
+	-- 		end
+	-- 		cameraY = cameraPrev + cameraDelta
+	-- 		cam:move(0, cameraDelta)
+	-- 	end
+	-- elseif key == "up" then
+	-- 	cameraPrev = cameraY
+	-- 	if cameraY > gameTop then
+	-- 		if cameraY - 50 < gameTop then
+	-- 			cameraDelta = cameraPrev - gameTop
+	-- 		else
+	-- 			cameraDelta = -50
+	-- 		end
+	-- 		cameraY = cameraPrev + cameraDelta
+	-- 		cam:move(0, cameraDelta)
+	-- 	end	
 	elseif key == "f1" then
 		if DEBUG then
 			DEBUG = false

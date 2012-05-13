@@ -5,7 +5,7 @@ local spriteData = {}
 function getSpriteData(strData)
 	if spriteData[strData] == nil then
 		local chunk = love.filesystem.load( "res/sprites/"..strData..".lua" ) -- load the chunk 
-		spriteData[strData] = chunk("res/sprites")
+		spriteData[strData] = chunk("res/sprites/")
 	end
 	
 	return spriteData[strData]
@@ -43,8 +43,10 @@ function createSprite(strData, strAnimation)
 		
 		if not keepTime or self.currentFrame > #animation then
 			self.currentFrame = 1
-			self.animCounter = animation[self.currentFrame].duration
+			self.animCounter = animation[self.currentFrame - 1].duration
 		end
+
+		self.flipH = animation.flipH
 	end
 	
 	function sprite:hasAnimation(strAnimation)
@@ -63,14 +65,14 @@ function createSprite(strData, strAnimation)
 				self.currentFrame = 1
 			end
 			
-			self.animCounter = animation[self.currentFrame].duration
+			self.animCounter = animation[self.currentFrame - 1].duration
 		end
 	end
 	
 	function sprite:draw()
 		local data = self.sprData
 		local animation = data.animations[sprite.animation]
-		local frame = animation[self.currentFrame]
+		local frame = animation[self.currentFrame - 1]
 		local q = data.quad
 		local animScale = animation.scale
 		

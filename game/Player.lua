@@ -2,6 +2,8 @@ require "Base"
 require "hump.vector"
 
 Player = Base:new()
+Player.sprite = {}
+Player.direction = "right"
 
 function Player:init()
 
@@ -12,6 +14,11 @@ function Player:init()
 	self.inventory = {}
 
 	Base.init(self)
+
+	self.sprite = spritemanager.createSprite()
+	self.sprite.strData = "girl"
+	self.sprite.animation = "standing_right"
+	self.sprite:setData(self.sprite.strData, self.sprite.animation, true)
 end
 
 
@@ -28,6 +35,13 @@ function Player:update(dt)
 		if dist < move then
 			self.pos = self.target
 			self.target = nil
+
+			if self.direction == "right" then
+				self.sprite:setAnimation("standing_right")
+			elseif self.direction == "left" then
+				self.sprite:setAnimation("standing_left")
+			end
+
 			if self.moveToAction then
 				print("performing action "..self.moveToAction)
 				assert( table.maxn(self.moveToActionParams) <= 5, "moveTo callback can only take 5 params")
@@ -41,20 +55,33 @@ function Player:update(dt)
 
 
 	end
+	self.sprite.x = self.pos.x
+	self.sprite.y = self.pos.y
+	self.sprite:update(dt)
 
 end
 
 function Player:draw()
-	love.graphics.push()
-	love.graphics.translate(-self.size.x / 2, -self.size.y)
-	love.graphics.setColor(0,0,0, 64)
-	love.graphics.rectangle("fill", self.pos.x, self.pos.y, self.size.x, self.size.y)
-	love.graphics.pop()
+	-- love.graphics.push()
+	-- love.graphics.translate(-self.size.x / 2, -self.size.y)
+	-- love.graphics.setColor(0,0,0, 64)
+	-- love.graphics.rectangle("fill", self.pos.x, self.pos.y, self.size.x, self.size.y)
+	-- love.graphics.pop()
+
+	self.sprite:draw()
 
 	Base.draw(self)
 end
 
 function Player:moveTo(v)
+	if v.x > self.pos.x then
+		self.sprite:setAnimation("walking_right")
+		self.direction = "right"
+	elseif v.x < self.pos.x then
+		self.sprite:setAnimation("walking_left")
+		self.direction = "left"
+	end
+
 	self.target = v
 
 	--constrain the position
@@ -64,6 +91,12 @@ end
 function Player:pickUp( obj )
 	obj.world:removeObject(obj)
 	table.insert( self.inventory, obj )
+
+	if self.direction == "right" then
+		self.sprite:setAnimation("pickup_right")
+	elseif self.direction == "left" then
+		self.sprite:setAnimation("pickup_left")
+	end
 end
 
 function Player:removeFromInventory(obj)
@@ -98,6 +131,11 @@ function Player:plant(pos)
 		self.world:addObject(plant)
 	end
 
+	if self.direction == "right" then
+		self.sprite:setAnimation("planting_right")
+	elseif self.direction == "left" then
+		self.sprite:setAnimation("planting_left")
+	end
 end
 
 function Player:moveToObjAndDo( obj, action, ... )
