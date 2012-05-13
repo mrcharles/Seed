@@ -140,7 +140,7 @@ function love.draw()
 		else
 			love.graphics.setColor(255,255,255, 255 - (titletime / -3)*255)
 		end
-		love.graphics.printf("SEED", 50, 50, 1000)
+		love.graphics.printf("Seed", 100, 50, 1000)
 	end
 
 end
