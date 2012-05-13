@@ -267,9 +267,9 @@ function World:create()
 	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
 	Genetics:registerValue( "leavesgrowspeed", MutationRate.Common, 0.1, 	1)
 	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
-	Genetics:registerValue( "blossomtype", 	MutationRate.Uncommon,	1, 		1, 					5)
-	Genetics:registerValue( "leavestype", 	MutationRate.Uncommon, 	1, 		1, 					5)
-	Genetics:registerValue( "planttype", 	MutationRate.Uncommon, 	1, 		1, 					2)
+	Genetics:registerValue( "blossomtype", 	MutationRate.Common,	1, 		1, 					5)
+	Genetics:registerValue( "leavestype", 	MutationRate.Common, 	1, 		1, 					5)
+	Genetics:registerValue( "planttype", 	MutationRate.Common, 	1, 		1, 					2)
 
 
 
