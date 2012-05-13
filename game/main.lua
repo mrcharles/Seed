@@ -94,14 +94,10 @@ function love.load()
 	--DRAWPHYSICS = true
 	--DRAWPLANTS = true
 
-	player = Player:new()
-	player:init()
 	world = World:new()
 	world:init()
 
 	world:create()
-
-	player.pos = vector(-100, world:getGroundHeight())
 
 	love.graphics.setBackgroundColor(255, 255, 255)
 
