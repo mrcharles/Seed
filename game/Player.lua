@@ -21,8 +21,6 @@ function Player:init()
 	self.sprite:setData(self.sprite.strData, self.sprite.animation, true)
 end
 
-
-
 function Player:update(dt)
 	if self.target ~= nil then
 		local toTarget = self.target - self.pos
@@ -135,6 +133,15 @@ function Player:plant(pos)
 		self.sprite:setAnimation("planting_right")
 	elseif self.direction == "left" then
 		self.sprite:setAnimation("planting_left")
+	end
+end
+
+function Player:water(pos)
+	-- add water to world at pos
+	if self.direction == "right" then
+		self.sprite:setAnimation("watering_right")
+	elseif self.direction == "left" then
+		self.sprite:setAnimation("watering_left")
 	end
 end
 

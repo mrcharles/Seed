@@ -101,7 +101,7 @@ function love.load()
 
 	world:create()
 
-	player.pos = vector(0, world:getGroundHeight())
+	player.pos = vector(-100, world:getGroundHeight())
 
 	player.world = world
 
@@ -224,6 +224,9 @@ function love.mousereleased(x, y, button)
 		-- 		cameraZoom = cameraZoom - 0.1
 		-- 		cam = camera(cameraX, cameraY, cameraZoom, 0)
 		-- 	--end
+		elseif button == "r" then
+			local waterpos = vector(x,y)
+			player:moveToAndDo( waterpos, "water", waterpos )
 		end
 	end
 end
