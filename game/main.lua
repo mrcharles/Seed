@@ -131,12 +131,32 @@ function love.draw()
 
 	player:draw()
 	cam:detach()
+
+	if titletime and titletime > -3 then
+		love.graphics.setFont(titlefont)
+		love.graphics.setColorMode("modulate")
+		if titletime > 0 then
+			love.graphics.setColor(255,255,255)
+		else
+			love.graphics.setColor(255,255,255, 255 - (titletime / -3)*255)
+		end
+		love.graphics.printf("SEED", 50, 50, 1000)
+	end
+
 end
 
 function love.update(dt)
 	if SPEEDUP then
 		dt = dt * 10.0
 	end
+	
+	if titletime == nil then
+		titletime = 6
+		titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
+	else
+		titletime = titletime - dt
+	end
+
 	world:update(dt)
 	player:update(dt)
 
