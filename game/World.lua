@@ -254,7 +254,7 @@ function World:create()
 	seed:init()
 
 	--						value 			rate  					change 	min 				max 			floor
-	Genetics:registerValue( "plantstyle", 	MutationRate.Rare, 		1, 		PlantStyle.Flower, 	PlantStyle.Tree, true)
+	Genetics:registerValue( "plantstyle", 	MutationRate.Common, 		1, 		PlantStyle.Flower, 	PlantStyle.Bush, true)
 	Genetics:registerValue( "size", 		MutationRate.Common, 	0.15, 	0.1, 				2)
 	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
 	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
