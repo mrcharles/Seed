@@ -267,9 +267,10 @@ function World:create()
 	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
 	Genetics:registerValue( "leavesgrowspeed", MutationRate.Common, 0.1, 	1)
 	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
-	Genetics:registerValue( "blossomtype", 	MutationRate.Common,	1, 		1, 					5)
+	Genetics:registerValue( "blossomtype", 	MutationRate.Common,	1, 		1, 				9)
 	Genetics:registerValue( "leavestype", 	MutationRate.Common, 	1, 		1, 					5)
 	Genetics:registerValue( "planttype", 	MutationRate.Common, 	1, 		1, 					2)
+	Genetics:registerValue( "lifetime", 	MutationRate.Common, 	20, 	180, 				1000)
 
 
 
@@ -290,6 +291,7 @@ function World:create()
 		blossomrate = 2,
 		blossomtype = 3,
 		blossomgrowspeed = 12.0,
+		lifetime = 60
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)
@@ -319,6 +321,10 @@ function World:update(dt)
 
 	self.physworld:update(physdt)
 	for i,v in ipairs(self.objects) do
-		v:update(dt)
+		if v.lifetime ~= nil and v.lifetime < 0 then
+			self:removeObject(v)
+		else
+			v:update(dt)
+		end
 	end
 end

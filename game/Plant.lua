@@ -3,6 +3,7 @@ require "Genetics"
 require "Tools"
 require "spritemanager"
 require "LayeredSprite"
+require "AlphaEffect"
 
 PlantState = {
 	Sprout = 1,
@@ -84,6 +85,8 @@ function Plant:init(seed)
 
 	self.stemsfull = {}
 
+	self.lifetime = self.genetics.lifetime
+
 	--load our data
 	local chunk = love.filesystem.load( self:makeDataName() ) -- load the chunk 
 	self.data = chunk()
@@ -102,7 +105,8 @@ function Plant:init(seed)
 
 	self.size = self:getSize()
 
-
+	self.effect = AlphaEffect:new()
+	self.effect:load()
 end
 
 function Plant:onAddToWorld(world)
@@ -282,6 +286,8 @@ function Plant:getSize()
 end
 
 function Plant:update(dt)
+	self.lifetime = self.lifetime - dt
+
 	self.growtime = self.growtime + dt
 	if self.growtime > self.genetics.growspeed then
 		self.growtime = 0
@@ -335,6 +341,10 @@ function Plant:update(dt)
 end
 
 function Plant:draw()
+	local alpha = self.lifetime/(self.genetics.lifetime * 0.1)
+	self.effect:setAlpha(alpha)
+	self.effect:setEffect()
+
 	love.graphics.push()
 	love.graphics.translate(self.pos.x, self.pos.y)
 	--love.graphics.setColor(self.genetics.color)
@@ -363,7 +373,6 @@ function Plant:draw()
 		love.graphics.scale(self.genetics.size)
 		blossom.sprite:setPosition(vector(0,0))
 		blossom.sprite:draw()
-
 		love.graphics.pop()
 	end
 
@@ -380,7 +389,6 @@ function Plant:draw()
 		leaf.sprite:setPosition(vector(0,0))
 		leaf.sprite:draw()
 		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
-
 		love.graphics.pop()
 
 	end
@@ -406,5 +414,8 @@ function Plant:draw()
 		end
 	end
 
+	self.effect:clearEffect()
+
 	Base.draw(self)
+
 end

@@ -8,8 +8,25 @@ if type(path) ~= "string" then
 	path = "."
 end
 
+function brighten( x, y, r, g, b, a )
+   r = math.min(r * 3, 255)
+   g = math.min(g * 3, 255)
+   b = math.min(b * 3, 255)
+   return r,g,b,a
+end
+
+function cutAlpha( x, y, r, g, b, a )
+   r = r
+   g = g
+   b = b
+   a = math.max(a * 0.125, 0)
+   return r,g,b,a
+end
+
 function RainEffect:load(strData, numParticles)
-	RainEffect.image = love.graphics.newImage("res/sprites/"..strData)--.."/palette.png")
+	local src = love.image.newImageData("res/sprites/"..strData)
+	src:mapPixel(cutAlpha)
+	RainEffect.image = love.graphics.newImage(src)--.."/palette.png")
 	RainEffect.image:setFilter("linear", "linear")
 
 	RainEffect.system = love.graphics.newParticleSystem(RainEffect.image, numParticles) 
