@@ -20,12 +20,22 @@ local balls = {
 testLayeredSprite = {}
 testRainEffect = {}
 testWindEffect = {}
+zoom = 1
 
 function love.load()
 	 -- assert(love.graphics.isSupported('pixeleffect'), 'Pixel effects are not supported on your hardware. Sorry about that.')
 
 	math.randomseed(os.time())
-	cam = camera(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2,1,0)
+	cameraX = love.graphics.getWidth() / 2
+	cameraY = love.graphics.getHeight() / 2
+	cameraZoom = 1
+	cam = camera(cameraX, cameraY, cameraZoom, 0)
+
+	gameRight = love.graphics.getWidth() * 3 / 2
+	gameLeft = love.graphics.getWidth() / 2
+	gameTop = love.graphics.getHeight() / 2
+	gameBottom = love.graphics.getHeight() / 2
+	
 
 	-- print("loaded some shit")
 	-- -- yep, Lua can be used for meta-programming an effect :D
@@ -115,7 +125,7 @@ function love.draw()
 	--love.graphics.setPixelEffect(effect)
 	--love.graphics.rectangle('fill', 0,0,love.graphics.getWidth(), love.graphics.getHeight())
 
-	testLayeredSprite:draw()
+	--testLayeredSprite:draw()
 	testRainEffect:draw()
 	testWindEffect:draw()
 
@@ -151,7 +161,7 @@ function love.update(dt)
 	testWindEffect:update(dt)
 end
 
-function love.mousepressed(x, y, button)
+function love.mousereleased(x, y, button)
 	if button == "l" then
 		local hit = world:getClickedObject(x, y)
 		if hit then
@@ -165,22 +175,86 @@ function love.mousepressed(x, y, button)
 			print('just moving')
 			player:moveTo( vector(x,y) )
 		end
+	elseif  button == "wu" then
+		cameraZoom = cameraZoom + 0.1
+		cam = camera(cameraX, cameraY, cameraZoom, 0)
+
+		-- already correct coordinates, just fix edges with zoom
+	elseif  button == "wd" then
+		--if cameraZoom > 1 then
+			cameraZoom = cameraZoom - 0.1
+			cam = camera(cameraX, cameraY, cameraZoom, 0)
+		--end
+	end
+end
+
+function getClampedPos(pos)
+	minx = gameLeft + (love.graphics.getWidth() / 2) / zoom;
+    maxx = gameRight - (love.graphics.getWidth()/ 2) / zoom;
+    miny = gameTop + (love.graphics.getHeight() / 2) / zoom;
+    maxy = gameBottom - (love.graphics.getHeigth() / 2) / zoom;
+
+    ret = vector(0, 0)
+
+    ret.x = math.min(math.max(pos.x, minx), maxx);
+    ret.y = math.min(math.max(pos.y, miny), maxy);
+    return ret
+end
+
+function love.mousepressed(x, y, button)
+	if button == "l" then
+	elseif  button == "r" then
 	end
 end
 
 function love.keyreleased( key, unicode )
+	cameraDelta = 0
+	cameraPrev = 0
+
 	if key == "right" then
-		cam:move(10, 0)
-
+		cameraPrev = cameraX
+		if cameraX < gameRight then	
+			if cameraX + 50 < gameRight then
+				cameraDelta = 50
+			else
+				cameraDelta = gameRight - cameraPrev
+			end
+			cameraX = cameraPrev + cameraDelta
+			cam:move(cameraDelta, 0)
+		end
 	elseif key == "left" then
-		cam:move(-10, 0)
-
+		cameraPrev = cameraX
+		if cameraX > gameLeft then
+			if cameraX - 50 > gameLeft then
+				cameraDelta = -50
+			else
+				cameraDelta = gameLeft - cameraPrev
+			end
+			cameraX = cameraPrev + cameraDelta
+			cam:move(cameraDelta, 0)
+		end
 	elseif key == "down" then
-		cam:move(0, 10)
-
+		cameraPrev = cameraY
+		if cameraY < gameBottom then	
+			if cameraY + 50 > gameBottom then
+				cameraDelta = gameBottom - cameraPrev
+			else
+				cameraDelta = 50
+			end
+			cameraY = cameraPrev + cameraDelta
+			cam:move(0, cameraDelta)
+		end
 	elseif key == "up" then
-		cam:move(0, -10)
-
+		cameraPrev = cameraY
+		if cameraY > gameTop then
+			if cameraY - 50 < gameTop then
+				cameraDelta = cameraPrev - gameTop
+			else
+				cameraDelta = -50
+			end
+			cameraY = cameraPrev + cameraDelta
+			cam:move(0, cameraDelta)
+		end	
 	elseif key == "f1" then
 		if DEBUG then
 			DEBUG = false
@@ -212,5 +286,6 @@ function love.keyreleased( key, unicode )
 			DRAWPLANTS = true
 		end
 	end
+
 
 end
