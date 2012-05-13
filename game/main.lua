@@ -103,8 +103,6 @@ function love.load()
 
 	player.pos = vector(-100, world:getGroundHeight())
 
-	player.world = world
-
 	love.graphics.setBackgroundColor(255, 255, 255)
 
 	testLayeredSprite = LayeredSprite:new()
@@ -116,6 +114,15 @@ function love.load()
 
 	testWindEffect = WindEffect:new()
 	testWindEffect:load("wind_leaf.png", 500)
+
+	titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
+
+	if love.filesystem.exists("legend.mp3") then
+		music = love.audio.newSource("legend.mp3", "stream")
+		music:setLooping(true)
+		love.audio.play(music)
+
+	end
 end
 
 function love.draw()
@@ -129,16 +136,37 @@ function love.draw()
 	testRainEffect:draw()
 	testWindEffect:draw()
 
-	player:draw()
+	if player then
+		player:draw()
+	end
 	cam:detach()
+
+	if not titletime or titletime > -3 then
+		love.graphics.setFont(titlefont)
+		love.graphics.setColorMode("modulate")
+		if not titletime  then
+			love.graphics.setColor(255,255,255)
+		else
+			love.graphics.setColor(255,255,255, 255 - (titletime / -3)*255)
+		end
+		love.graphics.printf("Seed", 100, 50, 1000)
+	end
+
 end
 
 function love.update(dt)
 	if SPEEDUP then
 		dt = dt * 10.0
 	end
+	
+	if titletime then
+		titletime = titletime - dt
+	end
+
 	world:update(dt)
-	player:update(dt)
+	if player then
+		player:update(dt)
+	end
 
 	if love.keyboard.isDown("right") then
 		testLayeredSprite.position.x = testLayeredSprite.position.x + (testLayeredSprite.speed * dt)
@@ -199,6 +227,17 @@ end
 
 function love.mousereleased(x, y, button)
 	x,y = cam:worldCoords(x, y)
+
+	if player == nil then
+		player = Player:new()
+		player:init()
+
+		player.pos = vector(-100, world:getGroundHeight())
+
+		player.world = world
+		titletime = 0
+	end
+
 
 	if mouseMoved == false then
 		if button == "l" then

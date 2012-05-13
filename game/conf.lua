@@ -1,6 +1,6 @@
 function love.conf(t)
-    t.title = "Untitled"        -- The title of the window the game is in (string)
-    t.author = "Unnamed"        -- The author of the game (string)
+    t.title = "Seed"        -- The title of the window the game is in (string)
+    t.author = "Charles: Gameplay, Colin: graphics, Mike: art, Christian:sweatshop worker"        -- The author of the game (string)
     t.identity = nil            -- The name of the save directory (string)
     t.version = "0.8.0"         -- The LÖVE version this game was made for (string)
     t.console = false           -- Attach a console (boolean, Windows only)

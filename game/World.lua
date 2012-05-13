@@ -254,7 +254,7 @@ function World:create()
 	seed:init()
 
 	--						value 			rate  					change 	min 				max 			floor
-	Genetics:registerValue( "plantstyle", 	MutationRate.Rare, 		1, 		PlantStyle.Flower, 	PlantStyle.Tree, true)
+	Genetics:registerValue( "plantstyle", 	MutationRate.Common, 		1, 		PlantStyle.Flower, 	PlantStyle.Bush, true)
 	Genetics:registerValue( "size", 		MutationRate.Common, 	0.15, 	0.1, 				2)
 	Genetics:registerValue( "growspeed", 	MutationRate.Uncommon, 	0.1, 	2)
 	Genetics:registerValue( "color", 		MutationRate.Uncommon, 	20, 	0, 					255)
@@ -267,15 +267,15 @@ function World:create()
 	Genetics:registerValue( "leavesrate", 	MutationRate.Common, 	2, 		0)
 	Genetics:registerValue( "leavesgrowspeed", MutationRate.Common, 0.1, 	1)
 	Genetics:registerValue( "leavesdensity",  MutationRate.Common, 	0.2, 	0.2)
-	--Genetics:registerValue( "blossomtype", 	MutationRate.Rare, 	1, 		1, amount of blossoms we have)
-	--Genetics:registerValue( "leavestype", 	MutationRate.Rare, 	1, 		1, amount of leaves we have)
-	--Genetics:registerValue( "planttype", 	MutationRate.Rare, 	1, 		1, amount of plants we have)
+	Genetics:registerValue( "blossomtype", 	MutationRate.Common,	1, 		1, 					5)
+	Genetics:registerValue( "leavestype", 	MutationRate.Common, 	1, 		1, 					5)
+	Genetics:registerValue( "planttype", 	MutationRate.Common, 	1, 		1, 					2)
 
 
 
 	seed.genetics = {
 		plantstyle = PlantStyle.Flower,
-		planttype = 1,
+		planttype = 2,
 		size = 1.0,
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
@@ -285,11 +285,11 @@ function World:create()
 		leavesrate = 4,
 		leavestype = 1,
 		leavesdensity = 0.7,
-		leavesgrowspeed = 2.0,
+		leavesgrowspeed = 8.0,
 		hasblossoms = true,
 		blossomrate = 2,
-		blossomtype = 1,
-		blossomgrowspeed = 3.0,
+		blossomtype = 3,
+		blossomgrowspeed = 12.0,
 	}
 
 	seed.pos = self:randomSpot() + vector(0, -100)
