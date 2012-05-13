@@ -5,7 +5,7 @@ require ("Genetics")
 
 World = Base:new()
 World.pctsky = 0.6
-World.pcthorizon = 0.25
+World.pcthorizon = 0.34
 World.objects = {}
 
 World.minx = -2000
@@ -19,24 +19,31 @@ World.radiationfalloff = 2.5
 
 World.groundresolution = 50
 World.ground = {}
+World.quad = {}
+World.image = {}
 
 local physobjs = {}
 
 function World:draw()
-	--draw sky
-	love.graphics.setColor(128,128,255)
-	love.graphics.rectangle("fill", 0,0, 
-							love.graphics.getWidth(), love.graphics.getHeight() * self.pctsky)
+	love.graphics.setColorMode("replace")
+	love.graphics.drawq(World.image, World.quad, 0, 0, 0, 
+		0.5, 0.5, 
+		0, 0)
 
-	--draw horizon
-	love.graphics.setColor(0, 128, 0)
-	love.graphics.rectangle("fill", 0, self.pctsky * love.graphics.getHeight(),
-							love.graphics.getWidth(), love.graphics.getHeight() * self.pcthorizon)
+	-- --draw sky
+	-- love.graphics.setColor(128,128,255,100)
+	-- love.graphics.rectangle("fill", 0,0, 
+	-- 						love.graphics.getWidth(), love.graphics.getHeight() * self.pctsky)
 
-	--draw ground
-	love.graphics.setColor(0,192, 0)
-	love.graphics.rectangle("fill", 0, (self.pctsky + self.pcthorizon) * love.graphics.getHeight(), 
-							love.graphics.getWidth(), (1.0 - self.pctsky - self.pcthorizon) * love.graphics.getHeight())
+	-- --draw horizon
+	-- love.graphics.setColor(0, 128, 0, 100)
+	-- love.graphics.rectangle("fill", 0, self.pctsky * love.graphics.getHeight(),
+	-- 						love.graphics.getWidth(), love.graphics.getHeight() * self.pcthorizon)
+
+	-- --draw ground
+	-- love.graphics.setColor(0,192, 0, 100)
+	-- love.graphics.rectangle("fill", 0, (self.pctsky + self.pcthorizon) * love.graphics.getHeight(), 
+	-- 						love.graphics.getWidth(), (1.0 - self.pctsky - self.pcthorizon) * love.graphics.getHeight())
 
 	if DRAWGROUND then
 		self:debugDrawGround()
@@ -57,6 +64,10 @@ function World:draw()
 			end
 		end
 	end
+
+	--love.graphics.draw(World.image, 0, 0, 0, 
+	--	1, 1, 
+	--	0, 0)
 end
 
 -- t,l,b,r
@@ -162,8 +173,9 @@ function World:init()
 	physobjs.ground.shape = love.physics.newRectangleShape( self.maxx - self.minx, self.thickness)
 	physobjs.ground.fixture = love.physics.newFixture(physobjs.ground.body, physobjs.ground.shape)
 
-
-
+	World.image = love.graphics.newImage("res/bg.png")
+	World.image:setFilter("linear", "linear")
+	World.quad = love.graphics.newQuad(0, 0, World.image:getWidth(), World.image:getHeight(), World.image:getWidth(), World.image:getHeight())
 end
 
 function World:addCirclePhysics(obj)
