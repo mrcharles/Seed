@@ -94,16 +94,11 @@ function love.load()
 	--DRAWPHYSICS = true
 	--DRAWPLANTS = true
 
-	player = Player:new()
-	player:init()
 	world = World:new()
 	world:init()
 
 	world:create()
 
-	player.pos = vector(0, world:getGroundHeight())
-
-	player.world = world
 
 	love.graphics.setBackgroundColor(255, 255, 255)
 
@@ -116,6 +111,9 @@ function love.load()
 
 	testWindEffect = WindEffect:new()
 	testWindEffect:load("wind_leaf.png", 500)
+
+	titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
+
 end
 
 function love.draw()
@@ -129,13 +127,15 @@ function love.draw()
 	testRainEffect:draw()
 	testWindEffect:draw()
 
-	player:draw()
+	if player then
+		player:draw()
+	end
 	cam:detach()
 
-	if titletime and titletime > -3 then
+	if not titletime or titletime > -3 then
 		love.graphics.setFont(titlefont)
 		love.graphics.setColorMode("modulate")
-		if titletime > 0 then
+		if not titletime  then
 			love.graphics.setColor(255,255,255)
 		else
 			love.graphics.setColor(255,255,255, 255 - (titletime / -3)*255)
@@ -150,15 +150,14 @@ function love.update(dt)
 		dt = dt * 10.0
 	end
 	
-	if titletime == nil then
-		titletime = 6
-		titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
-	else
+	if titletime then
 		titletime = titletime - dt
 	end
 
 	world:update(dt)
-	player:update(dt)
+	if player then
+		player:update(dt)
+	end
 
 	if love.keyboard.isDown("right") then
 		testLayeredSprite.position.x = testLayeredSprite.position.x + (testLayeredSprite.speed * dt)
@@ -219,6 +218,17 @@ end
 
 function love.mousereleased(x, y, button)
 	x,y = cam:worldCoords(x, y)
+
+	if player == nil then
+		player = Player:new()
+		player:init()
+
+		player.pos = vector(-100, world:getGroundHeight())
+
+		player.world = world
+		titletime = 0
+	end
+
 
 	if mouseMoved == false then
 		if button == "l" then
