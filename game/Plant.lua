@@ -138,7 +138,8 @@ end
 function Plant:hasBlossomPoints()
 	local state = self.data[self.state]
 	if state.blossompoints then
-		if table.maxn(self.blossoms) < table.maxn(state.blossompoints) then
+		local current = table.maxn(self.blossoms)
+		if current < table.maxn(state.blossompoints) and current < self.genetics.blossomrate then
 			return true
 		end
 	end
@@ -224,14 +225,21 @@ function Plant:getStem()
 	end
 end
 
-function Plant:getStemPos(idx, r)
-	local stem = self.data[self.state].stems[idx]
+function Plant:getRealStemPos(idx, vert)
+	local stem = self.data[self.state].stems[idx][vert]
 
-	if stem == nil then
-		print("wtf")
+	if stem.parent then
+		return vector( self.data[self.state].stems[stem.parent][stem.idx])
+	else
+		return vector( stem )
 	end
 
-	return Tools:lerp( vector( stem[1] ), vector( stem[2] ), r)
+
+end
+
+function Plant:getStemPos(idx, r)
+
+	return Tools:lerp( self:getRealStemPos( idx, 1 ), self:getRealStemPos( idx, 2 ), r)
 
 end
 

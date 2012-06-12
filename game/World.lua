@@ -275,8 +275,8 @@ function World:create()
 
 
 	seed.genetics = {
-		plantstyle = PlantStyle.Flower,
-		planttype = 2,
+		plantstyle = PlantStyle.Bush,
+		planttype = 1,
 		size = 1.0,
 		growspeed = 10.0,
 		color = { 128, 0, 128 },
@@ -285,7 +285,7 @@ function World:create()
 		hasleaves = true,
 		leavesrate = 4,
 		leavestype = 1,
-		leavesdensity = 0.7,
+		leavesdensity = 2,
 		leavesgrowspeed = 8.0,
 		hasblossoms = true,
 		blossomrate = 2,
