@@ -98,9 +98,21 @@ function createSprite(strData, strAnimation)
 		q:flip(self.flipH, self.flipV)
 		
 		love.graphics.setColorMode("replace")
+
+		local offsetX = frame.offsetX
+		local offsetY = frame.offsetY
+
+		if self.flipH then
+			offsetX = frame.w - offsetX
+		end
+		
+		if self.flipV then
+			offsetY = frame.h - offsety
+		end
+
 		love.graphics.drawq(data.image, q, self.x, self.y, self.rotation, 
 			animScale * self.scaleX, animScale * self.scaleY, 
-			frame.offsetX, frame.offsetY)
+			offsetX, offsetY)
 	end
 	
 	
