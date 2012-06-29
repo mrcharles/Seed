@@ -219,7 +219,9 @@ function Plant:getStem()
 					self.stemsfull[i] = true
 				end
 
-				return i
+				local normal = self:getRealStemPos(i, 2) - self:getRealStemPos(i, 1)
+
+				return i, normal:normalized()
 			end
 		end
 	end
@@ -245,11 +247,12 @@ end
 
 function Plant:sproutLeaves()
 
-	local stem = self:getStem()
+	local stem, normal = self:getStem()
 
 	local leaf = {
 		stem = stem,
 		pos = math.random(),
+		angle = Tools:angle(normal),
 		state = PlantState.Baby,
 		growtime = Genetics:mutateValue("leavesgrowspeed", self.genetics.leavesgrowspeed),
 		sprite = self:loadLeavesData()
@@ -397,6 +400,7 @@ function Plant:draw()
 		love.graphics.scale(self.genetics.size)
 		
 		leaf.sprite:setPosition(vector(0,0))
+		love.graphics.rotate(leaf.angle)
 		leaf.sprite:draw()
 		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
 		love.graphics.pop()

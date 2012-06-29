@@ -14,6 +14,21 @@ function Tools:init()
 
 end
 
+function Tools:angle(vec1, vec2)
+    local up = vec2 and vec2:normalized() or vector(0,-1)
+
+    local dir = vec1:normalized()
+
+    local angle = math.acos( dir * up )
+
+    if up:perpendicular() * dir < 0 then
+        angle = -angle
+    end
+
+    return angle
+
+end
+
 function Tools:screenCenter()
    return vector( WIDTH/2, HEIGHT/2 )
 end
