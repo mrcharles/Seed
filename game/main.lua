@@ -113,8 +113,8 @@ function love.load()
 
 	titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
 
-	if love.filesystem.exists("legend.mp3") then
-		music = love.audio.newSource("legend.mp3", "stream")
+	if love.filesystem.exists("plants_mix1.mp3") then
+		music = love.audio.newSource("plants_mix1.mp3", "stream")
 		music:setLooping(true)
 		love.audio.play(music)
 
