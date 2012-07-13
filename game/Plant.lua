@@ -135,6 +135,45 @@ function Plant:getNewBlossomPoint()
 	return table.maxn(self.blossoms) + 1
 end
 
+function Plant:getBlossomPoint(idx)
+	return vector( self.data[self.state].blossompoints[idx])
+end
+
+function Plant:getBlossomParent(idx)
+	local blossompoint = self.data[self.state].blossompoints[idx]
+	if blossompoint.parent then
+		return vector( self.data[self.state].stems[blossompoint.parent][blossompoint.idx])
+	end
+end
+
+function Plant:sproutBlossom()
+
+	local idx = self:getNewBlossomPoint()
+
+	local point = self:getBlossomPoint(idx)
+	local parent = self:getBlossomParent(idx)
+	local angle = 0
+
+	if parent then
+		local dir = point - parent
+		angle = Tools:angle(dir:normalized())
+	else
+		local theta = math.pi / 5
+		angle = -theta + math.random() * theta * 2
+	end
+
+	print("SPROUTING BLOSSOM")
+	local blossom  = {
+		blossompoint = idx,
+		state = PlantState.Baby,
+		angle = angle,
+		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed),
+		sprite = self:loadBlossomData()
+	}
+
+	table.insert(self.blossoms, blossom)
+end
+
 function Plant:hasBlossomPoints()
 	local state = self.data[self.state]
 	if state.blossompoints then
@@ -173,18 +212,6 @@ function Plant:loadLeavesData()
 	return testLayeredSprite
 end
 
-function Plant:sproutBlossom()
-
-	print("SPROUTING BLOSSOM")
-	local blossom  = {
-		blossompoint = self:getNewBlossomPoint(),
-		state = PlantState.Baby,
-		growtime = Genetics:mutateValue("blossomgrowspeed", self.genetics.blossomgrowspeed),
-		sprite = self:loadBlossomData()
-	}
-
-	table.insert(self.blossoms, blossom)
-end
 
 function Plant:getLeavesOnStem(idx)
 	local count = 0
@@ -260,11 +287,6 @@ function Plant:sproutLeaves()
 
 	table.insert(self.leaves, leaf)
 end
-
-function Plant:getBlossomPoint(idx)
-	return vector( self.data[self.state].blossompoints[idx])
-end
-
 
 function Plant:updateParts(dt)
 
@@ -384,6 +406,7 @@ function Plant:draw()
 		--local size = self.blossomdata[blossom.state].size;
 		--love.graphics.rectangle("fill", -size[1]/2, -size[2] / 2, size[1], size[2])
 		love.graphics.scale(self.genetics.size)
+		love.graphics.rotate(blossom.angle)
 		blossom.sprite:setPosition(vector(0,0))
 		blossom.sprite:draw()
 		love.graphics.pop()
