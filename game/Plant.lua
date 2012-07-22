@@ -375,13 +375,15 @@ function Plant:update(dt)
 	self:updateParts(dt)
 end
 
-function Plant:draw()
+function Plant:draw(untranslated)
 	local alpha = self.lifetime/(self.genetics.lifetime * 0.1)
 	self.effect:setAlpha(alpha)
 	self.effect:setEffect()
 
 	love.graphics.push()
-	love.graphics.translate(self.pos.x, self.pos.y)
+	if not untranslated then
+		love.graphics.translate(self.pos.x, self.pos.y)
+	end
 	--love.graphics.setColor(self.genetics.color)
 	--love.graphics.setColor(0, 113, 8)
 
@@ -433,7 +435,7 @@ function Plant:draw()
 	love.graphics.pop()
 
 
-	if DRAWPLANTS then
+	if DRAWPLANTS and not untranslated then
 		local state = self.data[self.state]
 
 		if state.blossompoints then 

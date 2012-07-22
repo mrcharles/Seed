@@ -1,6 +1,10 @@
 vector = require("hump.vector")
 Tools = {}
 
+function Tools:loadFonts()
+  self.fontMainLarge = love.graphics.newFont("LeagueScript.ttf", 144)
+end
+
 --half of these won't work because I just stole them from my codea proj
 
 function Tools:randVec()

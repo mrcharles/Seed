@@ -1,6 +1,7 @@
 require "Base"
 require "Plant"
 require "AlphaEffect"
+require "Tools"
 
 Seed = Base:new()
 
@@ -8,6 +9,21 @@ function Seed:init(plant)
 	self.size = vector(10, 10)
 	self.offset = vector(3,3)
 
+	self.snapshot = love.graphics.newCanvas(128,128)
+
+	love.graphics.setCanvas(self.snapshot)
+	love.graphics.setColor(255,255,255)
+	love.graphics.rectangle("fill",0,0, 128,128)
+	love.graphics.translate(64,0)
+	if plant then
+		plant:draw(true)
+	else
+		love.graphics.setFont(Tools.fontMainLarge)
+		love.graphics.setColorMode("modulate")
+		love.graphics.setColor(128,128,255)
+		love.graphics.printf("?", 0, 0, 1000)
+	end
+	love.graphics.setCanvas()
 
 	Base.init(self)
 

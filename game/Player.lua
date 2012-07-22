@@ -1,5 +1,6 @@
 require "Base"
 require "hump.vector"
+require "Inventory"
 
 Player = Base:new()
 Player.sprite = {}
@@ -11,7 +12,7 @@ function Player:init()
 	self.size = vector(60, 190)
 	self.offset = vector(0, -95)
 	self.actionoffset = vector(30, 0)
-	self.inventory = {}
+	self.inventory = Inventory:new()
 
 	Base.init(self)
 
@@ -88,7 +89,7 @@ end
 
 function Player:pickUp( obj )
 	obj.world:removeObject(obj)
-	table.insert( self.inventory, obj )
+	self.inventory:add(obj)
 
 	if self.direction == "right" then
 		self.sprite:setAnimation("pickup_right")
@@ -98,26 +99,20 @@ function Player:pickUp( obj )
 end
 
 function Player:removeFromInventory(obj)
-    for i, v in ipairs(self.inventory) do
-    	if v == obj then
-    		table.remove(self.inventory,i)
-       		return
-       	end
-    end
+	self.inventory:remove(obj)
 end
 
 function Player:removeSeed()
 	local seed = nil
 	if self:hasSeeds() then
-		seed = self.inventory[1]
-		self:removeFromInventory(seed)
+		seed = self.inventory:removeSelected()
 	end
 
 	return seed
 end
 
 function Player:hasSeeds()
-	return table.maxn( self.inventory ) >= 1
+	return self.inventory:count() >= 1
 end
 
 function Player:plant(pos)

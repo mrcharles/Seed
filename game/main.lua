@@ -5,6 +5,7 @@ require "World"
 require "LayeredSprite"
 require "RainEffect"
 require "WindEffect"
+require "Tools"
 
 local balls = {
 	{400,300}, -- this one will be controlled by the mouse
@@ -93,6 +94,7 @@ function love.load()
 
 	--DRAWPHYSICS = true
 	--DRAWPLANTS = true
+	Tools:loadFonts()
 
 	world = World:new()
 	world:init()
@@ -111,7 +113,8 @@ function love.load()
 	testWindEffect = WindEffect:new()
 	testWindEffect:load("wind_leaf.png", 500)
 
-	titlefont = love.graphics.newFont("LeagueScript.ttf", 144)
+
+	titlefont = Tools.fontMainLarge
 
 	if love.filesystem.exists("plants_mix1.mp3") then
 		music = love.audio.newSource("plants_mix1.mp3", "stream")
