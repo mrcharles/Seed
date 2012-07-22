@@ -5,6 +5,7 @@ require "Inventory"
 Player = Base:new()
 Player.sprite = {}
 Player.direction = "right"
+Player.ShowInventory = false
 
 function Player:init()
 

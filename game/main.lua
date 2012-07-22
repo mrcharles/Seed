@@ -137,7 +137,11 @@ function love.draw()
 
 	if player then
 		player:draw()
+		if player.ShowInventory then
+			player.inventory:draw()
+		end
 	end
+
 	cam:detach()
 
 	if not titletime or titletime > -3 then
@@ -313,6 +317,9 @@ function love.keyreleased( key, unicode )
 			cameraX = cameraPrev + cameraDelta
 			cam:move(cameraDelta, 0)
 		end
+	elseif key == " " and player then
+		player.ShowInventory = not player.ShowInventory
+
 	-- elseif key == "down" then
 	-- 	cameraPrev = cameraY
 	-- 	if cameraY < gameBottom then	
