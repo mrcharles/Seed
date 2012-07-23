@@ -241,6 +241,10 @@ function love.mousereleased(x, y, button)
 		titletime = 0
 	end
 
+	if player.ShowInventory then
+		player.inventory:pick( vector(x,y))
+		return
+	end
 
 	if mouseMoved == false then
 		if button == "l" then
