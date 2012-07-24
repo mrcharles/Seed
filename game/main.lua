@@ -18,6 +18,8 @@ local balls = {
 	{50,50}, {50,550}, {750,50}, {750,550}
 }
 
+SNAPSHOTSIZE = 128
+
 testLayeredSprite = {}
 testRainEffect = {}
 testWindEffect = {}
@@ -143,6 +145,12 @@ function love.draw()
 	end
 
 	cam:detach()
+
+	if player then
+		if player.ShowInventory then
+			player.inventory:draw()
+		end
+	end
 
 	if not titletime or titletime > -3 then
 		love.graphics.setFont(titlefont)

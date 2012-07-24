@@ -25,6 +25,13 @@ Plant = Base:new()
 Plant.blossomfrequency = 0.3
 Plant.leavesfrequency = 0.2
 
+Plant.snapshotscale = 
+{
+	0.5,
+	0.5,
+	0.5
+}
+
 Plant.sizes = {
 	{ -- flower
 	vector( 5, 10 ),
@@ -383,11 +390,13 @@ function Plant:draw(untranslated)
 	love.graphics.push()
 	if not untranslated then
 		love.graphics.translate(self.pos.x, self.pos.y)
+	else
+		love.graphics.scale(self.snapshotscale[self.genetics.plantstyle])
 	end
-	--love.graphics.setColor(self.genetics.color)
+	love.graphics.setColor(self.genetics.color)
 	--love.graphics.setColor(0, 113, 8)
 
-	--love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
+	love.graphics.rectangle("fill", -self.size.x / 2, -self.size.y, self.size.x, self.size.y)
 
 	if self.data[self.state].sprite then
 		love.graphics.push()

@@ -2,6 +2,7 @@ require "Base"
 require "Plant"
 require "AlphaEffect"
 require "Tools"
+require "Snapshot"
 
 Seed = Base:new()
 
@@ -9,23 +10,9 @@ function Seed:init(plant)
 	self.size = vector(10, 10)
 	self.offset = vector(3,3)
 
-	self.snapshot = love.graphics.newCanvas(128,128)
-
-	love.graphics.setCanvas(self.snapshot)
-	love.graphics.setColor(255,255,255)
-	love.graphics.rectangle("fill",0,0, 128,128)
-	love.graphics.translate(64,0)
-	if plant then
-		plant:draw(true)
-	else
-		love.graphics.setFont(Tools.fontMainLarge)
-		love.graphics.setColorMode("modulate")
-		love.graphics.setColor(128,128,255)
-		love.graphics.printf("?", 0, 0, 1000)
-	end
-	love.graphics.setCanvas()
-
 	Base.init(self)
+
+	self.snapshot = Snapshot:new(plant, 128)
 
 	Seed.image = love.graphics.newImage("res/sprites/seed.png")--.."/palette.png")
 	Seed.image:setFilter("linear", "linear")
@@ -34,7 +21,7 @@ function Seed:init(plant)
 	Seed.effect:load()
 end
 
-function Seed:draw()
+function Seed:draw(notranslation)
 	love.graphics.push()
 
 	--love.graphics.translate(self.pos.x, self.pos.y)
@@ -44,7 +31,9 @@ function Seed:draw()
 
 	Seed.effect:setAlpha(1.0)
 	Seed.effect:setEffect()
-	love.graphics.translate(self.pos.x, self.pos.y)
+	if not notranslation then
+		love.graphics.translate(self.pos.x, self.pos.y)
+	end
 	love.graphics.translate(-self.offset.x, -self.offset.y)
 	love.graphics.draw(Seed.image, 0, 0, 0,  1, 1, 0, 0)
 	Seed.effect:clearEffect()
