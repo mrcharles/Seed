@@ -139,16 +139,16 @@ function love.draw()
 
 	if player then
 		player:draw()
-		if player.ShowInventory then
-			player.inventory:draw()
-		end
+		-- if player.ShowInventory then
+		-- 	player.inventory:draw(vector(love.mouse.getPosition()))
+		-- end
 	end
 
 	cam:detach()
 
 	if player then
 		if player.ShowInventory then
-			player.inventory:draw()
+			player.inventory:draw(vector(love.mouse.getPosition()))
 		end
 	end
 

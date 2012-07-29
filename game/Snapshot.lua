@@ -20,7 +20,7 @@ function Snapshot:init(obj, size)
 		love.graphics.setColor(255,255,255, 255)
 		obj:draw(true)
 	else
-		love.graphics.translate(16,-16)
+		love.graphics.translate(size/2 - 16,size/2 + 16)
 		love.graphics.setFont(Tools.fontMainLarge)
 		love.graphics.setColorMode("modulate")
 		love.graphics.setColor(128,128,255)
@@ -29,14 +29,16 @@ function Snapshot:init(obj, size)
 	love.graphics.pop()
 	love.graphics.setCanvas()
 
+	self.size = size
 	self.image = love.graphics.newImage(canvas:getImageData())
 	self.quad = love.graphics.newQuad(0,0,size,size,size,size)
 end
 
-function Snapshot:draw(x, y, scale)
+function Snapshot:draw(x, y, size)
 
+	local scale = (size or self.size) / self.size
 	love.graphics.push()
-	love.graphics.translate(x,y)
+	love.graphics.translate(x - size / 2,y - size / 2)
 	love.graphics.setColor(255,255,255,255)
 	love.graphics.drawq( self.image, self.quad, 0, 0, 0, scale, scale )
 	love.graphics.pop()

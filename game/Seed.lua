@@ -12,7 +12,7 @@ function Seed:init(plant)
 
 	Base.init(self)
 
-	self.snapshot = Snapshot:new(plant, 128)
+	self.snapshot = Snapshot:new(plant, 256)
 
 	Seed.image = love.graphics.newImage("res/sprites/seed.png")--.."/palette.png")
 	Seed.image:setFilter("linear", "linear")
