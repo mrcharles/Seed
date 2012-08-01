@@ -27,9 +27,9 @@ Plant.leavesfrequency = 0.2
 
 Plant.snapshotscale = 
 {
-	0.5,
-	0.5,
-	0.5
+	1.0,
+	1.0,
+	1.0
 }
 
 Plant.sizes = {
