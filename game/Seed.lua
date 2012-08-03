@@ -6,11 +6,20 @@ require "Snapshot"
 
 Seed = Base:new()
 
+local uniqueid = 1
+
 function Seed:init(plant)
 	self.size = vector(10, 10)
 	self.offset = vector(3,3)
 
 	Base.init(self)
+
+	if plant then
+		self.parent = plant.id
+	else
+		self.parent = uniqueid
+		uniqueid = uniqueid + 1
+	end
 
 	self.snapshot = Snapshot:new(plant, 256)
 
@@ -46,6 +55,8 @@ end
 function Seed:makePlant()
 	local plant = Plant:new()
 	plant:init(self)
+	plant.id = uniqueid
+	uniqueid = uniqueid + 1
 
 	return plant
 

@@ -25,8 +25,21 @@ function Inventory:init()
 
 end
 
-function Inventory:add(item)
-	table.insert(self.items, item)
+function Inventory:add(newitem)
+	local added = false
+	for i,container in ipairs(self.items) do
+		local item = container[1]
+		if item.parent and item.parent == newitem.parent then
+			table.insert(container, newitem)
+			added = true
+			break
+		end
+	end
+
+	if not added then
+		table.insert(self.items, { newitem })
+	end
+
 	if self.selected == 0 then
 		self.selected = 1
 	end
@@ -37,12 +50,19 @@ function Inventory:count()
 
 end
 
-function Inventory:remove(item)
-    for i, v in ipairs(self.items) do
-    	if v == item then
-    		table.remove(self.items,i)
-       		return
-       	end
+function Inventory:remove(olditem)
+    for c, container in ipairs(self.items) do
+    	for i,item in ipairs(container) do
+    		if item == olditem then
+    			if #container == 1 then -- just remove the whole container
+    				table.remove(self.items, c)
+    				return
+    			else
+    				table.remove(container, i)
+    				return
+    			end
+    		end
+    	end
     end
 end
 
@@ -69,8 +89,9 @@ function Inventory:setSelected(idx)
 end
 
 function Inventory:removeSelected()
-	local item = self.items[self.selected]
-	self:remove(item)
+	local container = self.items[self.selected]
+	local item = container[#container]
+	self:remove(container[#container])
 	return item
 end
 
@@ -129,7 +150,13 @@ function Inventory:makeDrawFunc(idx, x, y, selected, zoomsize, color)
 
 		love.graphics.setColor(color)
 
-		local item = self.items[idx]
+		local container = self.items[idx]
+
+		local item = nil
+
+		if container then
+			item = container[1]
+		end
 
 		if item and item.snapshot then
 			item.snapshot:draw(drawx , drawy, zoomsize, color)

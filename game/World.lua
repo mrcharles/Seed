@@ -294,6 +294,7 @@ function World:create()
 		lifetime = 60
 	}
 
+	seed.parent = 1
 	seed.pos = self:randomSpot() + vector(0, -100)
 
 	self:addObject(seed)
@@ -324,6 +325,7 @@ function World:create()
 		lifetime = 60
 	}
 
+	seed2.parent = 2
 	seed2.pos = self:randomSpot() + vector(0, -100)
 
 	self:addObject(seed2)
