@@ -8,8 +8,8 @@ World.pctsky = 0.6
 World.pcthorizon = 0.34
 World.objects = {}
 
-World.minx = -2000
-World.maxx = 2000
+World.minx = 0
+World.maxx = 1280*3
 World.thickness = 100
 
 World.radiationdensity = 0.1
@@ -17,7 +17,7 @@ World.radiationrange = 3
 World.baserads = 0.5
 World.radiationfalloff = 2.5
 
-World.groundresolution = 50
+World.groundresolution = 40
 World.ground = {}
 World.quad = {}
 World.image = {}
@@ -126,12 +126,11 @@ end
 function World:debugDrawGround()
 
 	local y = self:getGroundHeight()
-	for i=1,table.maxn(self.ground) do
-		slice = self.ground[i]
-
+	--for i=1,table.maxn(self.ground) do
+	--	slice = self.ground[i]
+	for i,slice in ipairs(self.ground) do
 		local x = self.minx + (i - 1) * self.groundresolution
 		local mx = self.minx + i * self.groundresolution
-
 		--draw radiation as horizontal line
 
 		local a = slice.radiation * 255
